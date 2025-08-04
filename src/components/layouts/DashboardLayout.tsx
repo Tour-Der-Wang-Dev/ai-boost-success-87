@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useAuth } from '@/contexts/AuthContext';
 import { Navigation } from '@/components/ui/navigation';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -30,6 +31,19 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
   onNavigate
 }) => {
   const [isNavCollapsed, setIsNavCollapsed] = useState(false);
+  const { user, signOut } = useAuth();
+
+  const handleSignOut = async () => {
+    const { error } = await signOut();
+    if (!error) {
+      // Redirect will be handled by AuthContext
+    }
+  };
+
+  const getInitials = (name?: string) => {
+    if (!name) return 'U';
+    return name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
+  };
 
   return (
     <div className="flex h-screen bg-gradient-subtle">
@@ -73,14 +87,14 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" className="flex items-center space-x-2 px-2">
                     <Avatar className="w-8 h-8">
-                      <AvatarImage src="/placeholder-avatar.png" alt="User" />
+                      <AvatarImage src={user?.user_metadata?.avatar_url} alt="User" />
                       <AvatarFallback className="bg-primary text-primary-foreground">
-                        CS
+                        {getInitials(user?.user_metadata?.full_name || user?.email)}
                       </AvatarFallback>
                     </Avatar>
                     <div className="text-left hidden md:block">
-                      <p className="font-medium text-sm">Customer Success Manager</p>
-                      <p className="text-xs text-muted-foreground">Pro Plan</p>
+                      <p className="font-medium text-sm">{user?.user_metadata?.full_name || user?.email}</p>
+                      <p className="text-xs text-muted-foreground">{user?.email}</p>
                     </div>
                   </Button>
                 </DropdownMenuTrigger>
@@ -94,9 +108,9 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
                     Settings
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem className="text-destructive">
+                  <DropdownMenuItem className="text-destructive" onClick={handleSignOut}>
                     <LogOut className="w-4 h-4 mr-2" />
-                    Sign Out
+                    ออกจากระบบ
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
