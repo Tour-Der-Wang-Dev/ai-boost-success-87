@@ -1,0 +1,249 @@
+import React, { useState, useEffect } from 'react';
+import { DashboardLayout } from '@/components/layouts/DashboardLayout';
+import { CustomerCard } from '@/components/dashboard/CustomerCard';
+import { CustomerDialog } from '@/components/customers/CustomerDialog';
+import { CustomerFilters } from '@/components/customers/CustomerFilters';
+import { useCustomers, Customer } from '@/hooks/useCustomers';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { useToast } from '@/hooks/use-toast';
+import { 
+  Plus, 
+  Search, 
+  Filter,
+  Download,
+  Users
+} from 'lucide-react';
+
+const CustomersPage: React.FC = () => {
+  const { 
+    customers, 
+    loading, 
+    createCustomer, 
+    updateCustomer, 
+    deleteCustomer,
+    searchCustomers,
+    getCustomerStats
+  } = useCustomers();
+  
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedStatus, setSelectedStatus] = useState<string>('all');
+  const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
+  const [selectedCustomer, setSelectedCustomer] = useState<Customer | null>(null);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const { toast } = useToast();
+
+  const stats = getCustomerStats();
+
+  const handleNavigate = (path: string) => {
+    console.log('Navigate to:', path);
+  };
+
+  const handleSearch = async (query: string) => {
+    setSearchQuery(query);
+    if (query.trim()) {
+      await searchCustomers(query);
+    } else {
+      // Fetch all customers if search is empty
+      window.location.reload();
+    }
+  };
+
+  const handleCreateCustomer = async (customerData: any) => {
+    const result = await createCustomer(customerData);
+    if (!result.error) {
+      setIsCreateDialogOpen(false);
+    }
+  };
+
+  const handleEditCustomer = async (customerData: any) => {
+    if (selectedCustomer) {
+      const result = await updateCustomer(selectedCustomer.id, customerData);
+      if (!result.error) {
+        setIsEditDialogOpen(false);
+        setSelectedCustomer(null);
+      }
+    }
+  };
+
+  const handleDeleteCustomer = async (customerId: string) => {
+    const result = await deleteCustomer(customerId);
+    if (!result.error) {
+      toast({
+        title: "สำเร็จ",
+        description: "ลบลูกค้าเรียบร้อยแล้ว",
+      });
+    }
+  };
+
+  const openEditDialog = (customer: Customer) => {
+    setSelectedCustomer(customer);
+    setIsEditDialogOpen(true);
+  };
+
+  const filteredCustomers = customers.filter(customer => {
+    if (selectedStatus !== 'all' && customer.status !== selectedStatus) {
+      return false;
+    }
+    return true;
+  });
+
+  return (
+    <DashboardLayout currentPath="/customers" onNavigate={handleNavigate}>
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold bg-gradient-primary bg-clip-text text-transparent">
+            Customer Management
+          </h1>
+          <p className="text-muted-foreground mt-1">
+            จัดการและติดตามลูกค้าทั้งหมด
+          </p>
+        </div>
+        <div className="flex space-x-3">
+          <Button variant="outline" size="sm">
+            <Download className="w-4 h-4 mr-2" />
+            Export
+          </Button>
+          <Button onClick={() => setIsCreateDialogOpen(true)}>
+            <Plus className="w-4 h-4 mr-2" />
+            เพิ่มลูกค้าใหม่
+          </Button>
+        </div>
+      </div>
+
+      {/* Stats Overview */}
+      <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+        <Card className="bg-gradient-card shadow-card border-0">
+          <CardContent className="p-4">
+            <div className="text-center">
+              <div className="text-2xl font-bold text-foreground">{stats.total}</div>
+              <div className="text-sm text-muted-foreground">ลูกค้าทั้งหมด</div>
+            </div>
+          </CardContent>
+        </Card>
+        <Card className="bg-gradient-card shadow-card border-0">
+          <CardContent className="p-4">
+            <div className="text-center">
+              <div className="text-2xl font-bold text-accent">{stats.active}</div>
+              <div className="text-sm text-muted-foreground">ลูกค้าปกติ</div>
+            </div>
+          </CardContent>
+        </Card>
+        <Card className="bg-gradient-card shadow-card border-0">
+          <CardContent className="p-4">
+            <div className="text-center">
+              <div className="text-2xl font-bold text-orange-600">{stats.atRisk}</div>
+              <div className="text-sm text-muted-foreground">เสี่ยงสูญเสีย</div>
+            </div>
+          </CardContent>
+        </Card>
+        <Card className="bg-gradient-card shadow-card border-0">
+          <CardContent className="p-4">
+            <div className="text-center">
+              <div className="text-2xl font-bold text-primary">{stats.newCustomers}</div>
+              <div className="text-sm text-muted-foreground">ลูกค้าใหม่</div>
+            </div>
+          </CardContent>
+        </Card>
+        <Card className="bg-gradient-card shadow-card border-0">
+          <CardContent className="p-4">
+            <div className="text-center">
+              <div className="text-2xl font-bold text-foreground">{stats.avgHealthScore}%</div>
+              <div className="text-sm text-muted-foreground">คะแนนเฉลี่ย</div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Search and Filter */}
+      <div className="flex flex-col md:flex-row gap-4">
+        <div className="relative flex-1">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
+          <Input
+            placeholder="ค้นหาลูกค้า..."
+            value={searchQuery}
+            onChange={(e) => handleSearch(e.target.value)}
+            className="pl-10"
+          />
+        </div>
+        <CustomerFilters
+          selectedStatus={selectedStatus}
+          onStatusChange={setSelectedStatus}
+        />
+      </div>
+
+      {/* Customers Grid */}
+      <Card className="bg-gradient-card shadow-card border-0">
+        <CardHeader>
+          <CardTitle className="flex items-center space-x-2">
+            <Users className="w-5 h-5 text-primary" />
+            <span>ลูกค้าทั้งหมด ({filteredCustomers.length})</span>
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          {loading ? (
+            <div className="text-center py-8">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
+              <p className="text-muted-foreground mt-2">กำลังโหลด...</p>
+            </div>
+          ) : filteredCustomers.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {filteredCustomers.map((customer) => (
+                <CustomerCard
+                  key={customer.id}
+                  customer={{
+                    id: customer.id,
+                    name: customer.name,
+                    email: customer.email,
+                    company: customer.company || '',
+                    avatar: customer.avatar_url,
+                    status: customer.status as any,
+                    healthScore: customer.health_score || 0,
+                    lastActivity: customer.last_activity_date || 'ไม่มีข้อมูล',
+                    revenue: customer.monthly_revenue || 0,
+                    growthRate: customer.growth_rate
+                  }}
+                  onSelect={(customer) => console.log('Selected:', customer)}
+                  onEdit={() => openEditDialog(customer)}
+                  onMessage={(customer) => console.log('Message:', customer)}
+                />
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-8">
+              <Users className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+              <h3 className="text-lg font-medium text-foreground mb-2">ไม่พบลูกค้า</h3>
+              <p className="text-muted-foreground mb-4">
+                {searchQuery ? 'ไม่พบลูกค้าที่ตรงกับการค้นหา' : 'ยังไม่มีลูกค้าในระบบ'}
+              </p>
+              <Button onClick={() => setIsCreateDialogOpen(true)}>
+                <Plus className="w-4 h-4 mr-2" />
+                เพิ่มลูกค้าแรก
+              </Button>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* Dialogs */}
+      <CustomerDialog
+        open={isCreateDialogOpen}
+        onOpenChange={setIsCreateDialogOpen}
+        onSubmit={handleCreateCustomer}
+        title="เพิ่มลูกค้าใหม่"
+      />
+
+      <CustomerDialog
+        open={isEditDialogOpen}
+        onOpenChange={setIsEditDialogOpen}
+        onSubmit={handleEditCustomer}
+        customer={selectedCustomer}
+        title="แก้ไขข้อมูลลูกค้า"
+      />
+    </DashboardLayout>
+  );
+};
+
+export default CustomersPage;
