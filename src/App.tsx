@@ -7,6 +7,12 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import Index from "./pages/Index";
 import AuthPage from "./pages/AuthPage";
+import Dashboard from "./pages/Dashboard";
+import CustomersPage from "./pages/CustomersPage";
+import ActivitiesPage from "./pages/ActivitiesPage";
+import AIAssistantPage from "./pages/AIAssistantPage";
+import SocialSharePage from "./pages/SocialSharePage";
+import BillingPage from "./pages/BillingPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -22,7 +28,32 @@ const App = () => (
             <Route path="/auth" element={<AuthPage />} />
             <Route path="/" element={
               <ProtectedRoute>
-                <Index />
+                <Dashboard />
+              </ProtectedRoute>
+            } />
+            <Route path="/customers" element={
+              <ProtectedRoute>
+                <CustomersPage />
+              </ProtectedRoute>
+            } />
+            <Route path="/activities" element={
+              <ProtectedRoute>
+                <ActivitiesPage />
+              </ProtectedRoute>
+            } />
+            <Route path="/ai-assistant" element={
+              <ProtectedRoute>
+                <AIAssistantPage />
+              </ProtectedRoute>
+            } />
+            <Route path="/social-share" element={
+              <ProtectedRoute>
+                <SocialSharePage />
+              </ProtectedRoute>
+            } />
+            <Route path="/billing" element={
+              <ProtectedRoute>
+                <BillingPage />
               </ProtectedRoute>
             } />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

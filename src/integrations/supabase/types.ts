@@ -14,7 +14,199 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      activities: {
+        Row: {
+          assigned_to: string | null
+          completed_at: string | null
+          created_at: string
+          created_by: string
+          customer_id: string
+          description: string | null
+          due_date: string | null
+          id: string
+          metadata: Json | null
+          priority: string
+          status: string
+          title: string
+          type: string
+          updated_at: string
+        }
+        Insert: {
+          assigned_to?: string | null
+          completed_at?: string | null
+          created_at?: string
+          created_by: string
+          customer_id: string
+          description?: string | null
+          due_date?: string | null
+          id?: string
+          metadata?: Json | null
+          priority?: string
+          status?: string
+          title: string
+          type: string
+          updated_at?: string
+        }
+        Update: {
+          assigned_to?: string | null
+          completed_at?: string | null
+          created_at?: string
+          created_by?: string
+          customer_id?: string
+          description?: string | null
+          due_date?: string | null
+          id?: string
+          metadata?: Json | null
+          priority?: string
+          status?: string
+          title?: string
+          type?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "activities_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ai_insights: {
+        Row: {
+          confidence_score: number | null
+          content: string
+          created_at: string
+          created_by: string
+          customer_id: string | null
+          id: string
+          insight_type: string
+          metadata: Json | null
+          title: string
+        }
+        Insert: {
+          confidence_score?: number | null
+          content: string
+          created_at?: string
+          created_by: string
+          customer_id?: string | null
+          id?: string
+          insight_type: string
+          metadata?: Json | null
+          title: string
+        }
+        Update: {
+          confidence_score?: number | null
+          content?: string
+          created_at?: string
+          created_by?: string
+          customer_id?: string | null
+          id?: string
+          insight_type?: string
+          metadata?: Json | null
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ai_insights_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      customers: {
+        Row: {
+          assigned_agent_id: string | null
+          avatar_url: string | null
+          company: string | null
+          created_at: string
+          created_by: string
+          email: string
+          growth_rate: number | null
+          health_score: number | null
+          id: string
+          last_activity_date: string | null
+          monthly_revenue: number | null
+          name: string
+          notes: string | null
+          phone: string | null
+          status: string
+          tags: string[] | null
+          updated_at: string
+        }
+        Insert: {
+          assigned_agent_id?: string | null
+          avatar_url?: string | null
+          company?: string | null
+          created_at?: string
+          created_by: string
+          email: string
+          growth_rate?: number | null
+          health_score?: number | null
+          id?: string
+          last_activity_date?: string | null
+          monthly_revenue?: number | null
+          name: string
+          notes?: string | null
+          phone?: string | null
+          status?: string
+          tags?: string[] | null
+          updated_at?: string
+        }
+        Update: {
+          assigned_agent_id?: string | null
+          avatar_url?: string | null
+          company?: string | null
+          created_at?: string
+          created_by?: string
+          email?: string
+          growth_rate?: number | null
+          health_score?: number | null
+          id?: string
+          last_activity_date?: string | null
+          monthly_revenue?: number | null
+          name?: string
+          notes?: string | null
+          phone?: string | null
+          status?: string
+          tags?: string[] | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          display_name: string | null
+          id: string
+          role: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          display_name?: string | null
+          id?: string
+          role?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          display_name?: string | null
+          id?: string
+          role?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

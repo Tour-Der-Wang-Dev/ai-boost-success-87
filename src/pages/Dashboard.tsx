@@ -1,10 +1,13 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { DashboardLayout } from '@/components/layouts/DashboardLayout';
 import { StatsCard } from '@/components/dashboard/StatsCard';
 import { CustomerCard } from '@/components/dashboard/CustomerCard';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { useCustomers } from '@/hooks/useCustomers';
+import { useActivities } from '@/hooks/useActivities';
 import { 
   Users, 
   TrendingUp, 
@@ -17,87 +20,15 @@ import {
   CheckCircle
 } from 'lucide-react';
 
-// Mock data - in real app this would come from your backend
-const mockCustomers = [
-  {
-    id: '1',
-    name: 'Sarah Johnson',
-    email: 'sarah@techcorp.com',
-    company: 'TechCorp Inc.',
-    status: 'active' as const,
-    healthScore: 92,
-    lastActivity: '2 hours ago',
-    revenue: 15000,
-    growthRate: 12
-  },
-  {
-    id: '2', 
-    name: 'Michael Chen',
-    email: 'michael@innovate.co',
-    company: 'Innovate Solutions',
-    status: 'at-risk' as const,
-    healthScore: 45,
-    lastActivity: '5 days ago',
-    revenue: 8500,
-    growthRate: -8
-  },
-  {
-    id: '3',
-    name: 'Emily Rodriguez',
-    email: 'emily@startup.io',
-    company: 'Startup.io',
-    status: 'new' as const,
-    healthScore: 78,
-    lastActivity: '1 hour ago',
-    revenue: 3200,
-    growthRate: 25
-  },
-  {
-    id: '4',
-    name: 'David Park',
-    email: 'david@enterprise.com',
-    company: 'Enterprise Solutions',
-    status: 'active' as const,
-    healthScore: 87,
-    lastActivity: '30 minutes ago',
-    revenue: 25000,
-    growthRate: 5
-  }
-];
-
-const recentActivities = [
-  {
-    id: '1',
-    type: 'meeting',
-    customer: 'Sarah Johnson',
-    action: 'Completed onboarding call',
-    time: '2 hours ago',
-    status: 'completed'
-  },
-  {
-    id: '2',
-    type: 'alert',
-    customer: 'Michael Chen',
-    action: 'Health score dropped below 50%',
-    time: '1 day ago',
-    status: 'urgent'
-  },
-  {
-    id: '3',
-    type: 'success',
-    customer: 'Emily Rodriguez',
-    action: 'Upgraded to Pro plan',
-    time: '3 hours ago',
-    status: 'positive'
-  }
-];
 
 const Dashboard: React.FC = () => {
   const [selectedCustomer, setSelectedCustomer] = useState(null);
+  const navigate = useNavigate();
+  const { customers, loading: customersLoading } = useCustomers();
+  const { activities, loading: activitiesLoading } = useActivities();
 
   const handleNavigate = (path: string) => {
-    console.log('Navigate to:', path);
-    // In a real app, you'd use router navigation here
+    navigate(path);
   };
 
   const handleCustomerSelect = (customer: any) => {
@@ -105,8 +36,28 @@ const Dashboard: React.FC = () => {
     console.log('Selected customer:', customer);
   };
 
+  // Calculate real stats from database data
+  const stats = {
+    totalCustomers: customers.length,
+    activeCustomers: customers.filter(c => c.status === 'active').length,
+    atRiskCustomers: customers.filter(c => c.status === 'at-risk').length,
+    avgHealthScore: customers.length > 0 
+      ? Math.round(customers.reduce((sum, c) => sum + (c.health_score || 0), 0) / customers.length)
+      : 0,
+    totalRevenue: customers.reduce((sum, c) => sum + (c.monthly_revenue || 0), 0)
+  };
+
+  // Get recent activities (last 5)
+  const recentActivities = activities.slice(0, 5);
+
+  // Get top customers to display
+  const topCustomers = customers
+    .filter(c => c.status === 'active' || c.status === 'at-risk')
+    .sort((a, b) => (b.health_score || 0) - (a.health_score || 0))
+    .slice(0, 4);
+
   return (
-    <DashboardLayout currentPath="/" onNavigate={handleNavigate}>
+    <DashboardLayout>
       {/* Header Section */}
       <div className="flex items-center justify-between">
         <div>
@@ -137,7 +88,7 @@ const Dashboard: React.FC = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <StatsCard
           title="Total Customers"
-          value="248"
+          value={stats.totalCustomers.toString()}
           description="Active customers"
           icon={Users}
           trend={{ value: 12, label: 'vs last month', positive: true }}
@@ -145,7 +96,7 @@ const Dashboard: React.FC = () => {
         />
         <StatsCard
           title="Health Score Avg"
-          value="78%"
+          value={`${stats.avgHealthScore}%`}
           description="Overall customer health"
           icon={TrendingUp}
           trend={{ value: 5, label: 'vs last month', positive: true }}
@@ -153,7 +104,7 @@ const Dashboard: React.FC = () => {
         />
         <StatsCard
           title="Monthly Revenue"
-          value="$127,500"
+          value={`$${stats.totalRevenue.toLocaleString()}`}
           description="Recurring revenue"
           icon={DollarSign}
           trend={{ value: 8, label: 'vs last month', positive: true }}
@@ -161,7 +112,7 @@ const Dashboard: React.FC = () => {
         />
         <StatsCard
           title="At-Risk Customers"
-          value="12"
+          value={stats.atRiskCustomers.toString()}
           description="Need immediate attention"
           icon={AlertTriangle}
           trend={{ value: 3, label: 'vs last month', positive: false }}
@@ -186,17 +137,38 @@ const Dashboard: React.FC = () => {
               </div>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {mockCustomers.map((customer) => (
-                  <CustomerCard
-                    key={customer.id}
-                    customer={customer}
-                    onSelect={handleCustomerSelect}
-                    onEdit={(customer) => console.log('Edit:', customer)}
-                    onMessage={(customer) => console.log('Message:', customer)}
-                  />
-                ))}
-              </div>
+              {customersLoading ? (
+                <div className="flex items-center justify-center py-8">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {topCustomers.map((customer) => (
+                    <CustomerCard
+                      key={customer.id}
+                      customer={{
+                        id: customer.id,
+                        name: customer.name,
+                        email: customer.email,
+                        company: customer.company || '',
+                        status: customer.status as 'active' | 'at-risk' | 'new' | 'churned',
+                        healthScore: customer.health_score || 0,
+                        lastActivity: customer.last_activity_date || 'No recent activity',
+                        revenue: customer.monthly_revenue || 0,
+                        growthRate: customer.growth_rate || 0
+                      }}
+                      onSelect={handleCustomerSelect}
+                      onEdit={(customer) => console.log('Edit:', customer)}
+                      onMessage={(customer) => console.log('Message:', customer)}
+                    />
+                  ))}
+                  {topCustomers.length === 0 && !customersLoading && (
+                    <div className="col-span-2 text-center py-8 text-muted-foreground">
+                      No customers found. Create your first customer to get started.
+                    </div>
+                  )}
+                </div>
+              )}
             </CardContent>
           </Card>
         </div>
@@ -212,31 +184,44 @@ const Dashboard: React.FC = () => {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="space-y-4">
-                {recentActivities.map((activity) => (
-                  <div key={activity.id} className="flex items-start space-x-3">
-                    <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
-                      {activity.status === 'completed' && <CheckCircle className="w-4 h-4 text-accent" />}
-                      {activity.status === 'urgent' && <AlertTriangle className="w-4 h-4 text-orange-600" />}
-                      {activity.status === 'positive' && <TrendingUp className="w-4 h-4 text-accent" />}
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium text-foreground">
-                        {activity.customer}
-                      </p>
-                      <p className="text-sm text-muted-foreground">
-                        {activity.action}
-                      </p>
-                      <p className="text-xs text-muted-foreground mt-1">
-                        {activity.time}
-                      </p>
-                    </div>
+              {activitiesLoading ? (
+                <div className="flex items-center justify-center py-8">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+                </div>
+              ) : (
+                <>
+                  <div className="space-y-4">
+                    {recentActivities.map((activity) => (
+                      <div key={activity.id} className="flex items-start space-x-3">
+                        <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
+                          {activity.status === 'completed' && <CheckCircle className="w-4 h-4 text-accent" />}
+                          {activity.status === 'pending' && <AlertTriangle className="w-4 h-4 text-orange-600" />}
+                          {activity.status === 'in-progress' && <TrendingUp className="w-4 h-4 text-accent" />}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-medium text-foreground">
+                            {activity.customer?.name || 'Unknown Customer'}
+                          </p>
+                          <p className="text-sm text-muted-foreground">
+                            {activity.title}
+                          </p>
+                          <p className="text-xs text-muted-foreground mt-1">
+                            {new Date(activity.created_at).toLocaleDateString()}
+                          </p>
+                        </div>
+                      </div>
+                    ))}
+                    {recentActivities.length === 0 && (
+                      <div className="text-center py-8 text-muted-foreground">
+                        No recent activities found.
+                      </div>
+                    )}
                   </div>
-                ))}
-              </div>
-              <Button variant="ghost" size="sm" className="w-full mt-4" onClick={() => handleNavigate('/activities')}>
-                View All Activities
-              </Button>
+                  <Button variant="ghost" size="sm" className="w-full mt-4" onClick={() => handleNavigate('/activities')}>
+                    View All Activities
+                  </Button>
+                </>
+              )}
             </CardContent>
           </Card>
 
