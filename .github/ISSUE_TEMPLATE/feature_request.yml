@@ -1,0 +1,203 @@
+name: ✨ Feature Request
+description: Suggest an idea for this project
+title: "[FEATURE] "
+labels: ["enhancement", "feature-request"]
+assignees: []
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for suggesting a new feature! 
+        Help us understand what you'd like to see added to the application.
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: 🎯 Problem Statement
+      description: Is your feature request related to a problem? Please describe the problem you're trying to solve.
+      placeholder: I'm always frustrated when...
+    validations:
+      required: true
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: 💡 Proposed Solution
+      description: Describe the solution you'd like to see implemented.
+      placeholder: I would like to see...
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: 🔄 Alternative Solutions
+      description: Describe any alternative solutions or features you've considered.
+      placeholder: Alternatively, we could...
+
+  - type: dropdown
+    id: category
+    attributes:
+      label: 📂 Feature Category
+      description: Which area of the application does this feature relate to?
+      options:
+        - Customer Management
+        - Activity Tracking
+        - AI Insights
+        - Dashboard & Analytics
+        - Authentication & Security
+        - User Interface/UX
+        - API & Integrations
+        - Performance & Optimization
+        - Mobile Experience
+        - Reporting & Export
+        - Admin & Settings
+        - Other (specify in description)
+    validations:
+      required: true
+
+  - type: dropdown
+    id: user_type
+    attributes:
+      label: 👤 Target User
+      description: Who would primarily benefit from this feature?
+      options:
+        - End Users (Customer Success Managers)
+        - Administrators
+        - Team Managers
+        - All Users
+        - Developers/IT
+    validations:
+      required: true
+
+  - type: textarea
+    id: use_cases
+    attributes:
+      label: 🎭 Use Cases
+      description: Describe specific scenarios where this feature would be useful.
+      placeholder: |
+        1. As a [user type], I want to [action] so that [benefit]
+        2. When [situation], users need to [capability]
+        3. This would help with [specific workflow]...
+    validations:
+      required: true
+
+  - type: textarea
+    id: mockups
+    attributes:
+      label: 🎨 Mockups/Wireframes
+      description: If you have any mockups, wireframes, or visual examples, please share them here.
+      placeholder: Drag and drop images or paste URLs here
+
+  - type: textarea
+    id: acceptance_criteria
+    attributes:
+      label: ✅ Acceptance Criteria
+      description: |
+        Define what "done" looks like for this feature.
+        What should work? What should be tested?
+      placeholder: |
+        - [ ] User can...
+        - [ ] System should...
+        - [ ] When X happens, Y should occur...
+        - [ ] Feature should work on mobile devices
+        - [ ] Feature should be accessible
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: 🚨 Priority Level
+      description: How important is this feature for your workflow?
+      options:
+        - Nice to have - Would be helpful but not urgent
+        - Important - Would significantly improve workflow
+        - High - Critical for business processes
+        - Urgent - Blocking current work
+    validations:
+      required: true
+
+  - type: dropdown
+    id: effort
+    attributes:
+      label: ⏱️ Estimated Complexity
+      description: How complex do you think this feature would be to implement?
+      options:
+        - Small - Simple addition or modification
+        - Medium - Moderate changes required
+        - Large - Significant development effort
+        - Extra Large - Major feature requiring multiple sprints
+        - Not sure
+
+  - type: textarea
+    id: technical_considerations
+    attributes:
+      label: 🔧 Technical Considerations
+      description: |
+        Any technical requirements, constraints, or considerations?
+        - Third-party integrations needed?
+        - Performance requirements?
+        - Security considerations?
+        - Database changes required?
+      placeholder: Technical details or constraints...
+
+  - type: textarea
+    id: dependencies
+    attributes:
+      label: 🔗 Dependencies
+      description: |
+        Does this feature depend on other features or external factors?
+        - Requires other features to be completed first
+        - Needs external API access
+        - Depends on third-party services
+      placeholder: List any dependencies...
+
+  - type: textarea
+    id: additional_context
+    attributes:
+      label: 📝 Additional Context
+      description: |
+        Add any other context, research, or examples about the feature request.
+        - Links to similar features in other applications
+        - Research or user feedback supporting this request
+        - Business impact or metrics
+      placeholder: Any additional information...
+
+  - type: checkboxes
+    id: research
+    attributes:
+      label: 🔍 Research Checklist
+      description: Help us understand the background of this request
+      options:
+        - label: I have checked if this feature already exists
+          required: true
+        - label: I have searched existing feature requests to avoid duplicates
+          required: true
+        - label: I have considered the impact on existing users/workflows
+          required: false
+        - label: I have examples or research from similar applications
+          required: false
+
+  - type: checkboxes
+    id: willingness
+    attributes:
+      label: 🤝 Contribution
+      description: Are you willing to help with this feature?
+      options:
+        - label: I am willing to help with requirements gathering
+        - label: I can provide feedback during development
+        - label: I would be interested in testing this feature
+        - label: I might be able to contribute code (with guidance)
+        - label: I can help with documentation
+
+  - type: textarea
+    id: business_impact
+    attributes:
+      label: 📈 Business Impact
+      description: |
+        How would this feature impact the business or user experience?
+        - Time savings
+        - Efficiency improvements
+        - New capabilities enabled
+        - Competitive advantages
+      placeholder: Describe the business impact...
