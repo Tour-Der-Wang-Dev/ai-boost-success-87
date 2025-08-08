@@ -73,6 +73,45 @@ export type Database = {
           },
         ]
       }
+      advertisements: {
+        Row: {
+          ad_type: string | null
+          business_id: string
+          created_at: string
+          end_date: string | null
+          id: string
+          listing_id: string | null
+          metadata: Json | null
+          start_date: string | null
+          status: string | null
+          updated_at: string
+        }
+        Insert: {
+          ad_type?: string | null
+          business_id: string
+          created_at?: string
+          end_date?: string | null
+          id?: string
+          listing_id?: string | null
+          metadata?: Json | null
+          start_date?: string | null
+          status?: string | null
+          updated_at?: string
+        }
+        Update: {
+          ad_type?: string | null
+          business_id?: string
+          created_at?: string
+          end_date?: string | null
+          id?: string
+          listing_id?: string | null
+          metadata?: Json | null
+          start_date?: string | null
+          status?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       ai_insights: {
         Row: {
           confidence_score: number | null
@@ -116,6 +155,48 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      businesses: {
+        Row: {
+          avatar_url: string | null
+          category: string | null
+          created_at: string
+          description: string | null
+          id: string
+          is_premium: boolean
+          location: string | null
+          name: string
+          social_links: Json | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          category?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_premium?: boolean
+          location?: string | null
+          name: string
+          social_links?: Json | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          avatar_url?: string | null
+          category?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_premium?: boolean
+          location?: string | null
+          name?: string
+          social_links?: Json | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
       }
       customers: {
         Row: {
@@ -177,6 +258,87 @@ export type Database = {
         }
         Relationships: []
       }
+      listings: {
+        Row: {
+          business_id: string
+          category: string
+          created_at: string
+          description: string | null
+          featured_until: string | null
+          id: string
+          images: string[] | null
+          is_highlighted: boolean
+          price: number | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          business_id: string
+          category: string
+          created_at?: string
+          description?: string | null
+          featured_until?: string | null
+          id?: string
+          images?: string[] | null
+          is_highlighted?: boolean
+          price?: number | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          business_id?: string
+          category?: string
+          created_at?: string
+          description?: string | null
+          featured_until?: string | null
+          id?: string
+          images?: string[] | null
+          is_highlighted?: boolean
+          price?: number | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      payment_transactions: {
+        Row: {
+          amount: number | null
+          business_id: string | null
+          created_at: string
+          currency: string | null
+          id: string
+          payment_type: string | null
+          status: string | null
+          stripe_session_id: string | null
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          amount?: number | null
+          business_id?: string | null
+          created_at?: string
+          currency?: string | null
+          id?: string
+          payment_type?: string | null
+          status?: string | null
+          stripe_session_id?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          amount?: number | null
+          business_id?: string | null
+          created_at?: string
+          currency?: string | null
+          id?: string
+          payment_type?: string | null
+          status?: string | null
+          stripe_session_id?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -204,6 +366,132 @@ export type Database = {
           role?: string | null
           updated_at?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      recommendations: {
+        Row: {
+          created_at: string
+          id: string
+          listing_id: string
+          metadata: Json | null
+          reason: string | null
+          score: number | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          listing_id: string
+          metadata?: Json | null
+          reason?: string | null
+          score?: number | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          listing_id?: string
+          metadata?: Json | null
+          reason?: string | null
+          score?: number | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      reviews: {
+        Row: {
+          comment: string | null
+          created_at: string
+          id: string
+          listing_id: string
+          rating: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          comment?: string | null
+          created_at?: string
+          id?: string
+          listing_id: string
+          rating: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          comment?: string | null
+          created_at?: string
+          id?: string
+          listing_id?: string
+          rating?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      subscribers: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+          stripe_customer_id: string | null
+          subscribed: boolean
+          subscription_end: string | null
+          subscription_tier: string | null
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id?: string
+          stripe_customer_id?: string | null
+          subscribed?: boolean
+          subscription_end?: string | null
+          subscription_tier?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+          stripe_customer_id?: string | null
+          subscribed?: boolean
+          subscription_end?: string | null
+          subscription_tier?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      virtual_tours: {
+        Row: {
+          created_at: string
+          id: string
+          is_360: boolean
+          listing_id: string
+          metadata: Json | null
+          tour_url: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_360?: boolean
+          listing_id: string
+          metadata?: Json | null
+          tour_url?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_360?: boolean
+          listing_id?: string
+          metadata?: Json | null
+          tour_url?: string | null
+          updated_at?: string
         }
         Relationships: []
       }

@@ -2,10 +2,18 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 
+interface SubscriptionState {
+  subscribed: boolean;
+  subscription_tier: string | null;
+  subscription_end: string | null;
+}
+
 interface AuthContextType {
   user: User | null;
   session: Session | null;
   loading: boolean;
+  subscription: SubscriptionState | null;
+  refreshSubscription: () => Promise<void>;
   signIn: (email: string, password: string) => Promise<{ error: any }>;
   signUp: (email: string, password: string, fullName?: string) => Promise<{ error: any }>;
   signOut: () => Promise<{ error: any }>;
@@ -25,21 +33,42 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
+  const [subscription, setSubscription] = useState<SubscriptionState | null>(null);
+
+  const refreshSubscription = async () => {
+    try {
+      const { data, error } = await supabase.functions.invoke('check-subscription');
+      if ((error as any) || !data) {
+        throw (error as any) || new Error('No data');
+      }
+      const payload = data as any;
+      setSubscription({
+        subscribed: !!payload?.subscribed,
+        subscription_tier: payload?.subscription_tier ?? null,
+        subscription_end: payload?.subscription_end ?? null,
+      });
+    } catch (e) {
+      console.error('refreshSubscription error:', e);
+    }
+  };
 
   useEffect(() => {
     // Set up auth state listener FIRST
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+    const { data: { subscription: authSub } } = supabase.auth.onAuthStateChange(
       (event, session) => {
         console.log('Auth state changed:', event, session?.user?.email);
         setSession(session);
         setUser(session?.user ?? null);
         setLoading(false);
 
-        // Fetch user profile if logged in
+        // Fetch user profile and refresh subscription if logged in
         if (session?.user) {
           setTimeout(() => {
             fetchUserProfile(session.user.id);
           }, 0);
+          refreshSubscription();
+        } else {
+          setSubscription(null);
         }
       }
     );
@@ -49,9 +78,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       setSession(session);
       setUser(session?.user ?? null);
       setLoading(false);
+      if (session?.user) {
+        refreshSubscription();
+      }
     });
 
-    return () => subscription.unsubscribe();
+    return () => authSub.unsubscribe();
   }, []);
 
   const fetchUserProfile = async (userId: string) => {
@@ -115,6 +147,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     user,
     session,
     loading,
+    subscription,
+    refreshSubscription,
     signIn,
     signUp,
     signOut,
