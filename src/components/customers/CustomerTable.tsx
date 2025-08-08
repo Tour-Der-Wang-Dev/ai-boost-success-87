@@ -342,3 +342,5 @@ export const CustomerTable: React.FC<CustomerTableProps> = ({
     </div>
   );
 };
+
+export const CustomerTable = memo(CustomerTableComponent);
