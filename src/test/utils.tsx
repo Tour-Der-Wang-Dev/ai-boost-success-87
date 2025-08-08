@@ -54,9 +54,14 @@ const customRender = (
   options?: Omit<RenderOptions, 'wrapper'>,
 ) => render(ui, { wrapper: AllTheProviders, ...options });
 
+const customRenderWithoutRouter = (
+  ui: ReactElement,
+  options?: Omit<RenderOptions, 'wrapper'>,
+) => render(ui, { wrapper: ProvidersWithoutRouter, ...options });
+
 // Re-export everything
 export * from '@testing-library/react';
-export { customRender as render };
+export { customRender as render, customRenderWithoutRouter as renderWithoutRouter };
 
 // Mock data for testing
 export const mockCustomer = {
