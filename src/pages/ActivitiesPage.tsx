@@ -92,9 +92,11 @@ const ActivitiesPage: React.FC = () => {
   const filteredActivities = activities.filter(activity => {
     if (selectedType !== 'all' && activity.type !== selectedType) return false;
     if (selectedStatus !== 'all' && activity.status !== selectedStatus) return false;
+    if (selectedPriority !== 'all' && activity.priority !== selectedPriority) return false;
     if (searchQuery) {
       return activity.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-             activity.description?.toLowerCase().includes(searchQuery.toLowerCase());
+             activity.description?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+             activity.customer?.name.toLowerCase().includes(searchQuery.toLowerCase());
     }
     return true;
   });
