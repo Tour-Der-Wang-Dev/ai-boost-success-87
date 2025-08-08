@@ -314,7 +314,7 @@ const Dashboard: React.FC = () => {
 
         <TabsContent value="revenue" className="space-y-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <RevenueChart className="lg:col-span-2" />
+            <LazyRevenueChart className="lg:col-span-2" />
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <AdvancedStatsCard
