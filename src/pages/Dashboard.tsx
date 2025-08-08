@@ -179,8 +179,8 @@ const Dashboard: React.FC = () => {
 
         <TabsContent value="overview" className="space-y-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <RevenueChart className="lg:col-span-1" />
-            <CustomerHealthChart className="lg:col-span-1" />
+            <LazyRevenueChart className="lg:col-span-1" />
+            <LazyCustomerHealthChart className="lg:col-span-1" />
           </div>
           <ActivityHeatmap />
         </TabsContent>
