@@ -2,20 +2,29 @@ import React, { useState } from 'react';
 import { DashboardLayout } from '@/components/layouts/DashboardLayout';
 import { ActivityCard } from '@/components/activities/ActivityCard';
 import { ActivityDialog } from '@/components/activities/ActivityDialog';
+import { ActivityTimeline } from '@/components/activities/ActivityTimeline';
+import { ActivityKanban } from '@/components/activities/ActivityKanban';
 import { useActivities } from '@/hooks/useActivities';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { 
-  Plus, 
-  Search, 
+import { Badge } from '@/components/ui/badge';
+import {
+  Plus,
+  Search,
   Activity,
   Calendar,
   CheckCircle,
   Clock,
-  AlertTriangle
+  AlertTriangle,
+  List,
+  BarChart3,
+  Filter,
+  Download,
+  RefreshCw,
+  Target
 } from 'lucide-react';
 
 const ActivitiesPage: React.FC = () => {
@@ -23,19 +32,46 @@ const ActivitiesPage: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedType, setSelectedType] = useState<string>('all');
   const [selectedStatus, setSelectedStatus] = useState<string>('all');
+  const [selectedPriority, setSelectedPriority] = useState<string>('all');
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [selectedActivity, setSelectedActivity] = useState(null);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [defaultStatus, setDefaultStatus] = useState<string>('pending');
 
   const handleNavigate = (path: string) => {
     console.log('Navigate to:', path);
   };
 
   const handleCreateActivity = async (activityData: any) => {
-    const result = await createActivity(activityData);
+    const result = await createActivity({
+      ...activityData,
+      status: defaultStatus
+    });
     if (!result.error) {
       setIsCreateDialogOpen(false);
     }
+  };
+
+  const handleCreateActivityWithStatus = (status: string) => {
+    setDefaultStatus(status);
+    setIsCreateDialogOpen(true);
+  };
+
+  const handleExportActivities = () => {
+    const csvContent = [
+      'title,description,type,status,customer,due_date,created_at',
+      ...filteredActivities.map(activity =>
+        `"${activity.title}","${activity.description || ''}","${activity.type}","${activity.status}","${activity.customer?.name || ''}","${activity.due_date || ''}","${activity.created_at}"`
+      )
+    ].join('\n');
+
+    const blob = new Blob([csvContent], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `activities-${new Date().toISOString().split('T')[0]}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
   };
 
   const handleEditActivity = async (activityData: any) => {
@@ -56,9 +92,11 @@ const ActivitiesPage: React.FC = () => {
   const filteredActivities = activities.filter(activity => {
     if (selectedType !== 'all' && activity.type !== selectedType) return false;
     if (selectedStatus !== 'all' && activity.status !== selectedStatus) return false;
+    if (selectedPriority !== 'all' && activity.priority !== selectedPriority) return false;
     if (searchQuery) {
       return activity.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-             activity.description?.toLowerCase().includes(searchQuery.toLowerCase());
+             activity.description?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+             activity.customer?.name.toLowerCase().includes(searchQuery.toLowerCase());
     }
     return true;
   });
@@ -83,13 +121,23 @@ const ActivitiesPage: React.FC = () => {
             Activities Management
           </h1>
           <p className="text-muted-foreground mt-1">
-            ติดตามและจัดการกิจกรรมทั้งหมด
+            ติดตามและจัดการกิจกรรมทั้งหมด - {filteredActivities.length} activities
           </p>
         </div>
-        <Button onClick={() => setIsCreateDialogOpen(true)}>
-          <Plus className="w-4 h-4 mr-2" />
-          เพิ่มกิจกรรมใหม่
-        </Button>
+        <div className="flex space-x-3">
+          <Button variant="outline" size="sm" onClick={handleExportActivities}>
+            <Download className="w-4 h-4 mr-2" />
+            Export CSV
+          </Button>
+          <Button variant="outline" size="sm">
+            <RefreshCw className="w-4 h-4 mr-2" />
+            Refresh
+          </Button>
+          <Button onClick={() => setIsCreateDialogOpen(true)}>
+            <Plus className="w-4 h-4 mr-2" />
+            เพิ่มกิจกรรมใหม่
+          </Button>
+        </div>
       </div>
 
       {/* Stats Cards */}
@@ -156,20 +204,20 @@ const ActivitiesPage: React.FC = () => {
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
           <Input
-            placeholder="ค้นหากิจกรรม..."
+            placeholder="ค้นหากิจกรรม, ลูกค้า..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="pl-10"
           />
         </div>
-        
+
         <Select value={selectedType} onValueChange={setSelectedType}>
-          <SelectTrigger className="w-[150px]">
+          <SelectTrigger className="w-[130px]">
             <SelectValue placeholder="ประเภท" />
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">ทุกประเภท</SelectItem>
-            <SelectItem value="call">โทรศัพท์</SelectItem>
+            <SelectItem value="call">โทรศัพ���์</SelectItem>
             <SelectItem value="email">อีเมล</SelectItem>
             <SelectItem value="meeting">ประชุม</SelectItem>
             <SelectItem value="note">บันทึก</SelectItem>
@@ -177,9 +225,9 @@ const ActivitiesPage: React.FC = () => {
             <SelectItem value="milestone">เป้าหมาย</SelectItem>
           </SelectContent>
         </Select>
-        
+
         <Select value={selectedStatus} onValueChange={setSelectedStatus}>
-          <SelectTrigger className="w-[150px]">
+          <SelectTrigger className="w-[130px]">
             <SelectValue placeholder="สถานะ" />
           </SelectTrigger>
           <SelectContent>
@@ -190,21 +238,50 @@ const ActivitiesPage: React.FC = () => {
             <SelectItem value="cancelled">ยกเลิก</SelectItem>
           </SelectContent>
         </Select>
+
+        <Select value={selectedPriority} onValueChange={setSelectedPriority}>
+          <SelectTrigger className="w-[120px]">
+            <SelectValue placeholder="ความสำคัญ" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">ทุกระดับ</SelectItem>
+            <SelectItem value="high">สูง</SelectItem>
+            <SelectItem value="medium">ปานกลาง</SelectItem>
+            <SelectItem value="low">ต่ำ</SelectItem>
+          </SelectContent>
+        </Select>
       </div>
 
       {/* Activities Tabs */}
       <Tabs defaultValue="list" className="w-full">
-        <TabsList className="grid w-full grid-cols-2">
-          <TabsTrigger value="list">รายการ</TabsTrigger>
-          <TabsTrigger value="calendar">ปฏิทิน</TabsTrigger>
+        <TabsList className="grid w-full grid-cols-4">
+          <TabsTrigger value="list" className="flex items-center space-x-2">
+            <List className="w-4 h-4" />
+            <span>รายการ</span>
+          </TabsTrigger>
+          <TabsTrigger value="kanban" className="flex items-center space-x-2">
+            <Target className="w-4 h-4" />
+            <span>Kanban</span>
+          </TabsTrigger>
+          <TabsTrigger value="timeline" className="flex items-center space-x-2">
+            <Calendar className="w-4 h-4" />
+            <span>Timeline</span>
+          </TabsTrigger>
+          <TabsTrigger value="analytics" className="flex items-center space-x-2">
+            <BarChart3 className="w-4 h-4" />
+            <span>Analytics</span>
+          </TabsTrigger>
         </TabsList>
-        
+
         <TabsContent value="list" className="space-y-4">
           <Card className="bg-gradient-card shadow-card border-0">
             <CardHeader>
-              <CardTitle className="flex items-center space-x-2">
-                <Activity className="w-5 h-5 text-primary" />
-                <span>กิจกรรมทั้งหมด ({filteredActivities.length})</span>
+              <CardTitle className="flex items-center justify-between">
+                <div className="flex items-center space-x-2">
+                  <Activity className="w-5 h-5 text-primary" />
+                  <span>กิจกรรมทั้งหมด ({filteredActivities.length})</span>
+                </div>
+                <Badge variant="outline">List View</Badge>
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -241,19 +318,154 @@ const ActivitiesPage: React.FC = () => {
             </CardContent>
           </Card>
         </TabsContent>
-        
-        <TabsContent value="calendar">
-          <Card className="bg-gradient-card shadow-card border-0">
-            <CardContent className="p-8">
-              <div className="text-center">
-                <Calendar className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
-                <h3 className="text-lg font-medium text-foreground mb-2">Calendar View</h3>
-                <p className="text-muted-foreground">
-                  Calendar integration จะพัฒนาในเวอร์ชันต่อไป
-                </p>
-              </div>
-            </CardContent>
-          </Card>
+
+        <TabsContent value="kanban" className="space-y-4">
+          <ActivityKanban
+            activities={filteredActivities}
+            onEdit={openEditDialog}
+            onDelete={(id) => deleteActivity(id)}
+            onStatusUpdate={(id, status) => updateActivity(id, { status })}
+            onCreateActivity={handleCreateActivityWithStatus}
+          />
+        </TabsContent>
+
+        <TabsContent value="timeline" className="space-y-4">
+          <ActivityTimeline
+            activities={filteredActivities}
+            onEdit={openEditDialog}
+            onDelete={(id) => deleteActivity(id)}
+            onStatusUpdate={(id, status) => updateActivity(id, { status })}
+          />
+        </TabsContent>
+
+        <TabsContent value="analytics" className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <Card className="bg-gradient-card shadow-card border-0">
+              <CardContent className="p-4">
+                <div className="flex items-center space-x-3">
+                  <div className="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center">
+                    <Clock className="w-5 h-5 text-orange-600" />
+                  </div>
+                  <div>
+                    <div className="text-2xl font-bold text-foreground">{stats.pending}</div>
+                    <div className="text-sm text-muted-foreground">Pending</div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="bg-gradient-card shadow-card border-0">
+              <CardContent className="p-4">
+                <div className="flex items-center space-x-3">
+                  <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
+                    <Activity className="w-5 h-5 text-primary" />
+                  </div>
+                  <div>
+                    <div className="text-2xl font-bold text-foreground">{stats.inProgress}</div>
+                    <div className="text-sm text-muted-foreground">In Progress</div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="bg-gradient-card shadow-card border-0">
+              <CardContent className="p-4">
+                <div className="flex items-center space-x-3">
+                  <div className="w-10 h-10 bg-accent/10 rounded-lg flex items-center justify-center">
+                    <CheckCircle className="w-5 h-5 text-accent" />
+                  </div>
+                  <div>
+                    <div className="text-2xl font-bold text-foreground">{stats.completed}</div>
+                    <div className="text-sm text-muted-foreground">Completed</div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="bg-gradient-card shadow-card border-0">
+              <CardContent className="p-4">
+                <div className="flex items-center space-x-3">
+                  <div className="w-10 h-10 bg-destructive/10 rounded-lg flex items-center justify-center">
+                    <AlertTriangle className="w-5 h-5 text-destructive" />
+                  </div>
+                  <div>
+                    <div className="text-2xl font-bold text-foreground">{stats.cancelled}</div>
+                    <div className="text-sm text-muted-foreground">Cancelled</div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <Card className="bg-gradient-card shadow-card border-0">
+              <CardHeader>
+                <CardTitle>Activity Distribution</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  {[
+                    { type: 'call', count: activities.filter(a => a.type === 'call').length, color: 'bg-blue-500' },
+                    { type: 'email', count: activities.filter(a => a.type === 'email').length, color: 'bg-green-500' },
+                    { type: 'meeting', count: activities.filter(a => a.type === 'meeting').length, color: 'bg-purple-500' },
+                    { type: 'task', count: activities.filter(a => a.type === 'task').length, color: 'bg-orange-500' },
+                    { type: 'note', count: activities.filter(a => a.type === 'note').length, color: 'bg-yellow-500' }
+                  ].map(({ type, count, color }) => (
+                    <div key={type} className="flex items-center space-x-3">
+                      <div className={`w-4 h-4 rounded ${color}`} />
+                      <span className="capitalize text-sm font-medium w-20">{type}</span>
+                      <div className="flex-1 bg-muted rounded-full h-2">
+                        <div
+                          className={`h-2 rounded-full ${color}`}
+                          style={{ width: `${(count / activities.length) * 100}%` }}
+                        />
+                      </div>
+                      <span className="text-sm text-muted-foreground w-12">{count}</span>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="bg-gradient-card shadow-card border-0">
+              <CardHeader>
+                <CardTitle>Performance Metrics</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-muted-foreground">Completion Rate</span>
+                    <span className="font-medium">
+                      {activities.length > 0 ? Math.round((stats.completed / activities.length) * 100) : 0}%
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-muted-foreground">Overdue Tasks</span>
+                    <Badge variant="destructive">
+                      {activities.filter(a => a.due_date && new Date(a.due_date) < new Date() && a.status !== 'completed').length}
+                    </Badge>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-muted-foreground">This Week</span>
+                    <span className="font-medium">
+                      {activities.filter(a => {
+                        const activityDate = new Date(a.created_at);
+                        const weekAgo = new Date();
+                        weekAgo.setDate(weekAgo.getDate() - 7);
+                        return activityDate > weekAgo;
+                      }).length}
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-muted-foreground">Avg per Day</span>
+                    <span className="font-medium">
+                      {(activities.length / 30).toFixed(1)}
+                    </span>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
         </TabsContent>
       </Tabs>
 

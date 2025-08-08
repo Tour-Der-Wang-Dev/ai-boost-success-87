@@ -38,8 +38,18 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const refreshSubscription = async () => {
     try {
       const { data, error } = await supabase.functions.invoke('check-subscription');
-      if ((error as any) || !data) {
-        throw (error as any) || new Error('No data');
+      if (error) {
+        // If the function is not properly configured, set default subscription state
+        console.warn('Subscription check failed, setting default state:', error);
+        setSubscription({
+          subscribed: false,
+          subscription_tier: null,
+          subscription_end: null,
+        });
+        return;
+      }
+      if (!data) {
+        throw new Error('No data received from subscription check');
       }
       const payload = data as any;
       setSubscription({
@@ -49,6 +59,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       });
     } catch (e) {
       console.error('refreshSubscription error:', e);
+      // Set a default subscription state when the function fails
+      setSubscription({
+        subscribed: false,
+        subscription_tier: null,
+        subscription_end: null,
+      });
     }
   };
 
