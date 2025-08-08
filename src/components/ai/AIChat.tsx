@@ -1,20 +1,16 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, memo, useMemo, useCallback } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { 
-  Bot, 
-  User, 
-  Send, 
-  Loader2, 
-  MessageSquare,
-  Lightbulb,
-  TrendingUp,
-  AlertTriangle,
-  Target,
+// Import only essential icons
+import {
+  Bot,
+  User,
+  Send,
+  Loader2,
   Sparkles
 } from 'lucide-react';
 
