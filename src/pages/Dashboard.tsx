@@ -1,23 +1,32 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { DashboardLayout } from '@/components/layouts/DashboardLayout';
-import { StatsCard } from '@/components/dashboard/StatsCard';
+import { AdvancedStatsCard } from '@/components/dashboard/AdvancedStatsCard';
 import { CustomerCard } from '@/components/dashboard/CustomerCard';
+import { RevenueChart } from '@/components/dashboard/RevenueChart';
+import { CustomerHealthChart } from '@/components/dashboard/CustomerHealthChart';
+import { ActivityHeatmap } from '@/components/dashboard/ActivityHeatmap';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useCustomers } from '@/hooks/useCustomers';
 import { useActivities } from '@/hooks/useActivities';
-import { 
-  Users, 
-  TrendingUp, 
-  DollarSign, 
+import {
+  Users,
+  TrendingUp,
+  DollarSign,
   Activity,
   Plus,
   Filter,
   Download,
   AlertTriangle,
-  CheckCircle
+  CheckCircle,
+  Target,
+  Calendar,
+  BarChart3,
+  PieChart,
+  RefreshCw
 } from 'lucide-react';
 
 
