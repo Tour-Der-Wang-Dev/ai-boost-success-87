@@ -1,19 +1,28 @@
 import React, { useState, useEffect } from 'react';
 import { DashboardLayout } from '@/components/layouts/DashboardLayout';
 import { CustomerCard } from '@/components/dashboard/CustomerCard';
+import { CustomerTable } from '@/components/customers/CustomerTable';
 import { CustomerDialog } from '@/components/customers/CustomerDialog';
 import { CustomerFilters } from '@/components/customers/CustomerFilters';
+import { CustomerImportDialog } from '@/components/customers/CustomerImportDialog';
 import { useCustomers, Customer } from '@/hooks/useCustomers';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
-import { 
-  Plus, 
-  Search, 
+import {
+  Plus,
+  Search,
   Filter,
   Download,
-  Users
+  Users,
+  Upload,
+  Grid3X3,
+  Table,
+  BarChart3,
+  RefreshCw
 } from 'lucide-react';
 
 const CustomersPage: React.FC = () => {
@@ -108,7 +117,7 @@ const CustomersPage: React.FC = () => {
           </Button>
           <Button onClick={() => setIsCreateDialogOpen(true)}>
             <Plus className="w-4 h-4 mr-2" />
-            เพิ่มลูกค้าใหม่
+            เพิ่มลู���ค้าใหม่
           </Button>
         </div>
       </div>
