@@ -39,7 +39,7 @@ interface CustomerTableProps {
 type SortField = 'name' | 'company' | 'health_score' | 'monthly_revenue' | 'last_activity_date' | 'status';
 type SortDirection = 'asc' | 'desc';
 
-export const CustomerTable: React.FC<CustomerTableProps> = ({
+const CustomerTableComponent: React.FC<CustomerTableProps> = ({
   customers,
   onEdit,
   onDelete,
