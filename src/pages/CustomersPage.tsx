@@ -41,6 +41,8 @@ const CustomersPage: React.FC = () => {
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [selectedCustomer, setSelectedCustomer] = useState<Customer | null>(null);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [isImportDialogOpen, setIsImportDialogOpen] = useState(false);
+  const [viewMode, setViewMode] = useState<'grid' | 'table'>('grid');
   const { toast } = useToast();
 
   const stats = getCustomerStats();
@@ -107,7 +109,7 @@ const CustomersPage: React.FC = () => {
             Customer Management
           </h1>
           <p className="text-muted-foreground mt-1">
-            จัดการและติดตามลูกค้าทั้งหมด
+            จัดกา��และติดตามลูกค้าทั้งหมด
           </p>
         </div>
         <div className="flex space-x-3">
@@ -117,7 +119,7 @@ const CustomersPage: React.FC = () => {
           </Button>
           <Button onClick={() => setIsCreateDialogOpen(true)}>
             <Plus className="w-4 h-4 mr-2" />
-            เพิ่มลู���ค้าใหม่
+            เพิ่มลูกค้าใหม่
           </Button>
         </div>
       </div>
