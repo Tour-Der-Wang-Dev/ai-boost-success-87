@@ -50,7 +50,7 @@ describe('Customer Management Flow', () => {
   });
 
   it('should allow navigation through customer management features', async () => {
-    render(<App />);
+    renderWithoutRouter(<App />);
 
     // Wait for authentication and data loading
     await waitFor(() => {
