@@ -151,13 +151,21 @@ const CustomersPage: React.FC = () => {
             Customer Management
           </h1>
           <p className="text-muted-foreground mt-1">
-            จัดการและติดตามลูกค้าทั้งหมด
+            จัดการและติดตามลูกค้าทั้งหมด - {filteredCustomers.length} customers
           </p>
         </div>
         <div className="flex space-x-3">
-          <Button variant="outline" size="sm">
+          <Button variant="outline" size="sm" onClick={handleExportCustomers}>
             <Download className="w-4 h-4 mr-2" />
-            Export
+            Export CSV
+          </Button>
+          <Button variant="outline" size="sm" onClick={() => setIsImportDialogOpen(true)}>
+            <Upload className="w-4 h-4 mr-2" />
+            Import
+          </Button>
+          <Button variant="outline" size="sm">
+            <RefreshCw className="w-4 h-4 mr-2" />
+            Refresh
           </Button>
           <Button onClick={() => setIsCreateDialogOpen(true)}>
             <Plus className="w-4 h-4 mr-2" />
@@ -196,7 +204,7 @@ const CustomersPage: React.FC = () => {
           <CardContent className="p-4">
             <div className="text-center">
               <div className="text-2xl font-bold text-primary">{stats.newCustomers}</div>
-              <div className="text-sm text-muted-foreground">ลูกค้าใหม่</div>
+              <div className="text-sm text-muted-foreground">ลูก���้าใหม่</div>
             </div>
           </CardContent>
         </Card>
@@ -285,7 +293,7 @@ const CustomersPage: React.FC = () => {
         open={isCreateDialogOpen}
         onOpenChange={setIsCreateDialogOpen}
         onSubmit={handleCreateCustomer}
-        title="เพิ่มลูกค้าใหม่"
+        title="เพิ่มลูกค��าใหม่"
       />
 
       <CustomerDialog
