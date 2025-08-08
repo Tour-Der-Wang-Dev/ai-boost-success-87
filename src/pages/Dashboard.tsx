@@ -23,7 +23,7 @@ import {
   RefreshCw
 } from 'lucide-react';
 
-const Dashboard: React.FC = () => {
+const DashboardComponent: React.FC = () => {
   const [selectedCustomer, setSelectedCustomer] = useState(null);
   const navigate = useNavigate();
   const { customers, loading: customersLoading } = useCustomers();
@@ -405,4 +405,5 @@ const Dashboard: React.FC = () => {
   );
 };
 
+const Dashboard = memo(DashboardComponent);
 export default Dashboard;
