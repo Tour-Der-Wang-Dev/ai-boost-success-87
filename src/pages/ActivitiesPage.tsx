@@ -32,9 +32,11 @@ const ActivitiesPage: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedType, setSelectedType] = useState<string>('all');
   const [selectedStatus, setSelectedStatus] = useState<string>('all');
+  const [selectedPriority, setSelectedPriority] = useState<string>('all');
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [selectedActivity, setSelectedActivity] = useState(null);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [defaultStatus, setDefaultStatus] = useState<string>('pending');
 
   const handleNavigate = (path: string) => {
     console.log('Navigate to:', path);
