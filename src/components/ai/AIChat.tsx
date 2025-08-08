@@ -26,7 +26,7 @@ interface AIChatProps {
   onInsightGenerated?: (insight: any) => void;
 }
 
-export const AIChat: React.FC<AIChatProps> = ({ onInsightGenerated }) => {
+const AIChatComponent: React.FC<AIChatProps> = ({ onInsightGenerated }) => {
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',
@@ -381,3 +381,5 @@ Would you like me to dive deeper into any of these areas?`,
     </Card>
   );
 };
+
+export const AIChat = memo(AIChatComponent);
