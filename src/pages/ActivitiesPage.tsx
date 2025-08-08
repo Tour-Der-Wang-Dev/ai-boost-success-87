@@ -121,13 +121,23 @@ const ActivitiesPage: React.FC = () => {
             Activities Management
           </h1>
           <p className="text-muted-foreground mt-1">
-            ติดตามและจัดการกิจกรรมทั้งหมด
+            ติดตามและจัดการกิจกรรมทั้งหมด - {filteredActivities.length} activities
           </p>
         </div>
-        <Button onClick={() => setIsCreateDialogOpen(true)}>
-          <Plus className="w-4 h-4 mr-2" />
-          เพิ่มกิจกรรมใหม่
-        </Button>
+        <div className="flex space-x-3">
+          <Button variant="outline" size="sm" onClick={handleExportActivities}>
+            <Download className="w-4 h-4 mr-2" />
+            Export CSV
+          </Button>
+          <Button variant="outline" size="sm">
+            <RefreshCw className="w-4 h-4 mr-2" />
+            Refresh
+          </Button>
+          <Button onClick={() => setIsCreateDialogOpen(true)}>
+            <Plus className="w-4 h-4 mr-2" />
+            เพิ่มกิจกรรมใหม่
+          </Button>
+        </div>
       </div>
 
       {/* Stats Cards */}
