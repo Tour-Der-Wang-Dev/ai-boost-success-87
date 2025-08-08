@@ -204,15 +204,15 @@ const ActivitiesPage: React.FC = () => {
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
           <Input
-            placeholder="ค้นหากิจกรรม..."
+            placeholder="ค้นหากิจกรรม, ลูกค้า..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="pl-10"
           />
         </div>
-        
+
         <Select value={selectedType} onValueChange={setSelectedType}>
-          <SelectTrigger className="w-[150px]">
+          <SelectTrigger className="w-[130px]">
             <SelectValue placeholder="ประเภท" />
           </SelectTrigger>
           <SelectContent>
@@ -225,9 +225,9 @@ const ActivitiesPage: React.FC = () => {
             <SelectItem value="milestone">เป้าหมาย</SelectItem>
           </SelectContent>
         </Select>
-        
+
         <Select value={selectedStatus} onValueChange={setSelectedStatus}>
-          <SelectTrigger className="w-[150px]">
+          <SelectTrigger className="w-[130px]">
             <SelectValue placeholder="สถานะ" />
           </SelectTrigger>
           <SelectContent>
@@ -236,6 +236,18 @@ const ActivitiesPage: React.FC = () => {
             <SelectItem value="in-progress">กำลังดำเนินการ</SelectItem>
             <SelectItem value="completed">เสร็จสิ้น</SelectItem>
             <SelectItem value="cancelled">ยกเลิก</SelectItem>
+          </SelectContent>
+        </Select>
+
+        <Select value={selectedPriority} onValueChange={setSelectedPriority}>
+          <SelectTrigger className="w-[120px]">
+            <SelectValue placeholder="ความสำคัญ" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">ทุกระดับ</SelectItem>
+            <SelectItem value="high">สูง</SelectItem>
+            <SelectItem value="medium">ปานกลาง</SelectItem>
+            <SelectItem value="low">ต่ำ</SelectItem>
           </SelectContent>
         </Select>
       </div>
