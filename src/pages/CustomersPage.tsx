@@ -93,6 +93,48 @@ const CustomersPage: React.FC = () => {
     setIsEditDialogOpen(true);
   };
 
+  const handleImportCustomers = async (data: any[]) => {
+    // Process the imported data
+    for (const customerData of data) {
+      await createCustomer({
+        name: customerData.name || '',
+        email: customerData.email || '',
+        company: customerData.company || '',
+        phone: customerData.phone || '',
+        status: customerData.status || 'new',
+        health_score: customerData.health_score || 0,
+        monthly_revenue: customerData.monthly_revenue || 0
+      });
+    }
+
+    toast({
+      title: "Import Successful",
+      description: `Successfully imported ${data.length} customers.`,
+    });
+  };
+
+  const handleExportCustomers = () => {
+    const csvContent = [
+      'name,email,company,phone,status,health_score,monthly_revenue,last_activity_date',
+      ...filteredCustomers.map(customer =>
+        `"${customer.name || ''}","${customer.email || ''}","${customer.company || ''}","${customer.phone || ''}","${customer.status || ''}",${customer.health_score || 0},${customer.monthly_revenue || 0},"${customer.last_activity_date || ''}"`
+      )
+    ].join('\n');
+
+    const blob = new Blob([csvContent], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `customers-${new Date().toISOString().split('T')[0]}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+
+    toast({
+      title: "Export Successful",
+      description: `Exported ${filteredCustomers.length} customers to CSV.`,
+    });
+  };
+
   const filteredCustomers = customers.filter(customer => {
     if (selectedStatus !== 'all' && customer.status !== selectedStatus) {
       return false;
@@ -109,7 +151,7 @@ const CustomersPage: React.FC = () => {
             Customer Management
           </h1>
           <p className="text-muted-foreground mt-1">
-            จัดกา��และติดตามลูกค้าทั้งหมด
+            จัดการและติดตามลูกค้าทั้งหมด
           </p>
         </div>
         <div className="flex space-x-3">
