@@ -38,25 +38,28 @@ const Dashboard: React.FC = () => {
     console.log('Selected customer:', customer);
   };
 
-  // Calculate real stats from database data
-  const stats = {
+  // Calculate real stats from database data with memoization
+  const stats = useMemo(() => ({
     totalCustomers: customers.length,
     activeCustomers: customers.filter(c => c.status === 'active').length,
     atRiskCustomers: customers.filter(c => c.status === 'at-risk').length,
-    avgHealthScore: customers.length > 0 
+    avgHealthScore: customers.length > 0
       ? Math.round(customers.reduce((sum, c) => sum + (c.health_score || 0), 0) / customers.length)
       : 0,
     totalRevenue: customers.reduce((sum, c) => sum + (c.monthly_revenue || 0), 0)
-  };
+  }), [customers]);
 
-  // Get recent activities (last 5)
-  const recentActivities = activities.slice(0, 5);
+  // Get recent activities (last 5) with memoization
+  const recentActivities = useMemo(() => activities.slice(0, 5), [activities]);
 
-  // Get top customers to display
-  const topCustomers = customers
-    .filter(c => c.status === 'active' || c.status === 'at-risk')
-    .sort((a, b) => (b.health_score || 0) - (a.health_score || 0))
-    .slice(0, 4);
+  // Get top customers to display with memoization
+  const topCustomers = useMemo(() =>
+    customers
+      .filter(c => c.status === 'active' || c.status === 'at-risk')
+      .sort((a, b) => (b.health_score || 0) - (a.health_score || 0))
+      .slice(0, 4),
+    [customers]
+  );
 
   return (
     <DashboardLayout>
