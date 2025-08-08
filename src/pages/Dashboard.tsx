@@ -21,7 +21,10 @@ import {
   Download,
   AlertTriangle,
   CheckCircle,
-  RefreshCw
+  RefreshCw,
+  BarChart3,
+  Target,
+  Calendar
 } from 'lucide-react';
 
 const DashboardComponent: React.FC = () => {
