@@ -2,18 +2,27 @@ import React, { useState } from 'react';
 import { DashboardLayout } from '@/components/layouts/DashboardLayout';
 import { AIInsightCard } from '@/components/ai/AIInsightCard';
 import { AIPromptDialog } from '@/components/ai/AIPromptDialog';
+import { AIChat } from '@/components/ai/AIChat';
+import { AIWorkflows } from '@/components/ai/AIWorkflows';
 import { useAIInsights } from '@/hooks/useAIInsights';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { 
-  Brain, 
-  Plus, 
+import { Badge } from '@/components/ui/badge';
+import {
+  Brain,
+  Plus,
   Sparkles,
   TrendingUp,
   AlertTriangle,
   Target,
-  Lightbulb
+  Lightbulb,
+  MessageSquare,
+  Zap,
+  BarChart3,
+  Settings,
+  Bot,
+  Wand2
 } from 'lucide-react';
 
 const AIAssistantPage: React.FC = () => {
