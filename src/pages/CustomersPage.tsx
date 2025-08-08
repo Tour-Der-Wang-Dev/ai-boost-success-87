@@ -204,7 +204,7 @@ const CustomersPage: React.FC = () => {
           <CardContent className="p-4">
             <div className="text-center">
               <div className="text-2xl font-bold text-primary">{stats.newCustomers}</div>
-              <div className="text-sm text-muted-foreground">ลูก���้าใหม่</div>
+              <div className="text-sm text-muted-foreground">ลูกค้าใหม่</div>
             </div>
           </CardContent>
         </Card>
@@ -218,7 +218,7 @@ const CustomersPage: React.FC = () => {
         </Card>
       </div>
 
-      {/* Search and Filter */}
+      {/* Search, Filter and View Controls */}
       <div className="flex flex-col md:flex-row gap-4">
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
@@ -233,6 +233,22 @@ const CustomersPage: React.FC = () => {
           selectedStatus={selectedStatus}
           onStatusChange={setSelectedStatus}
         />
+        <div className="flex items-center space-x-2">
+          <Button
+            variant={viewMode === 'grid' ? 'default' : 'outline'}
+            size="sm"
+            onClick={() => setViewMode('grid')}
+          >
+            <Grid3X3 className="w-4 h-4" />
+          </Button>
+          <Button
+            variant={viewMode === 'table' ? 'default' : 'outline'}
+            size="sm"
+            onClick={() => setViewMode('table')}
+          >
+            <Table className="w-4 h-4" />
+          </Button>
+        </div>
       </div>
 
       {/* Customers Grid */}
@@ -293,7 +309,7 @@ const CustomersPage: React.FC = () => {
         open={isCreateDialogOpen}
         onOpenChange={setIsCreateDialogOpen}
         onSubmit={handleCreateCustomer}
-        title="เพิ่มลูกค��าใหม่"
+        title="เพิ่มลูกค้าใหม่"
       />
 
       <CustomerDialog
