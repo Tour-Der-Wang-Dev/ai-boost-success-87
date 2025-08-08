@@ -58,9 +58,9 @@ const CustomerTableComponent: React.FC<CustomerTableProps> = ({
     }
   };
 
-  const sortedCustomers = [...customers].sort((a, b) => {
+  const sortedCustomers = useMemo(() => [...customers].sort((a, b) => {
     let aValue, bValue;
-    
+
     switch (sortField) {
       case 'name':
         aValue = a.name?.toLowerCase() || '';
@@ -96,7 +96,7 @@ const CustomerTableComponent: React.FC<CustomerTableProps> = ({
     } else {
       return aValue > bValue ? -1 : aValue < bValue ? 1 : 0;
     }
-  });
+  }), [customers, sortField, sortDirection]);
 
   const getStatusBadge = (status: string) => {
     switch (status) {
