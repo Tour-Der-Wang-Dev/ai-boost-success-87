@@ -73,7 +73,7 @@ describe('Customer Management Flow', () => {
   });
 
   it('should display dashboard statistics correctly', async () => {
-    render(<App />);
+    renderWithoutRouter(<App />);
 
     await waitFor(() => {
       expect(screen.getByText('Customer Success Dashboard')).toBeInTheDocument();
@@ -86,7 +86,7 @@ describe('Customer Management Flow', () => {
   });
 
   it('should handle loading states gracefully', async () => {
-    render(<App />);
+    renderWithoutRouter(<App />);
 
     // Should show loading spinner initially
     expect(screen.getByText(/loading/i)).toBeInTheDocument();
@@ -98,7 +98,7 @@ describe('Customer Management Flow', () => {
   });
 
   it('should render charts when dashboard loads', async () => {
-    render(<App />);
+    renderWithoutRouter(<App />);
 
     await waitFor(() => {
       expect(screen.getByTestId('revenue-chart')).toBeInTheDocument();
