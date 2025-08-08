@@ -38,6 +38,19 @@ const AIAssistantPage: React.FC = () => {
     setIsPromptDialogOpen(false);
   };
 
+  const handleChatInsightGenerated = (insight: any) => {
+    // Add the chat-generated insight to the insights list
+    console.log('Chat insight generated:', insight);
+  };
+
+  const handleWorkflowToggle = (workflowId: string, isActive: boolean) => {
+    console.log(`Workflow ${workflowId} ${isActive ? 'activated' : 'deactivated'}`);
+  };
+
+  const handleWorkflowConfigure = (workflowId: string) => {
+    console.log(`Configure workflow ${workflowId}`);
+  };
+
   const insightsByType = {
     health_analysis: insights.filter(i => i.insight_type === 'health_analysis'),
     recommendation: insights.filter(i => i.insight_type === 'recommendation'),
