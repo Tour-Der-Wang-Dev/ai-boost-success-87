@@ -18,6 +18,7 @@ import {
   DollarSign,
   Activity,
   Plus,
+  Download,
   AlertTriangle,
   CheckCircle,
   RefreshCw
