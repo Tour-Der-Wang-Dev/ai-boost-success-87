@@ -118,13 +118,72 @@ const AIAssistantPage: React.FC = () => {
         </div>
       </div>
 
+      {/* AI Stats Overview */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <Card className="bg-gradient-card shadow-card border-0">
+          <CardContent className="p-4">
+            <div className="flex items-center space-x-3">
+              <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
+                <Brain className="w-5 h-5 text-primary" />
+              </div>
+              <div>
+                <div className="text-2xl font-bold">{insights.length}</div>
+                <div className="text-sm text-muted-foreground">Total Insights</div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="bg-gradient-card shadow-card border-0">
+          <CardContent className="p-4">
+            <div className="flex items-center space-x-3">
+              <div className="w-10 h-10 bg-accent/10 rounded-lg flex items-center justify-center">
+                <Zap className="w-5 h-5 text-accent" />
+              </div>
+              <div>
+                <div className="text-2xl font-bold">6</div>
+                <div className="text-sm text-muted-foreground">Active Workflows</div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="bg-gradient-card shadow-card border-0">
+          <CardContent className="p-4">
+            <div className="flex items-center space-x-3">
+              <div className="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center">
+                <AlertTriangle className="w-5 h-5 text-orange-600" />
+              </div>
+              <div>
+                <div className="text-2xl font-bold">3</div>
+                <div className="text-sm text-muted-foreground">Risk Alerts</div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="bg-gradient-card shadow-card border-0">
+          <CardContent className="p-4">
+            <div className="flex items-center space-x-3">
+              <div className="w-10 h-10 bg-secondary/10 rounded-lg flex items-center justify-center">
+                <Target className="w-5 h-5 text-secondary" />
+              </div>
+              <div>
+                <div className="text-2xl font-bold">12</div>
+                <div className="text-sm text-muted-foreground">Opportunities</div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
       {/* Quick Prompts */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {quickPrompts.map((prompt) => {
           const Icon = prompt.icon;
           return (
-            <Card 
-              key={prompt.id} 
+            <Card
+              key={prompt.id}
               className="bg-gradient-card shadow-card hover:shadow-elegant transition-all duration-300 cursor-pointer border-0"
               onClick={() => handleGenerateInsight(prompt.prompt)}
             >
@@ -170,7 +229,7 @@ const AIAssistantPage: React.FC = () => {
               {loading ? (
                 <div className="text-center py-8">
                   <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
-                  <p className="text-muted-foreground mt-2">กำล��งสร้าง AI Insights...</p>
+                  <p className="text-muted-foreground mt-2">กำลังสร้าง AI Insights...</p>
                 </div>
               ) : insights.length > 0 ? (
                 <div className="space-y-4">
@@ -181,7 +240,7 @@ const AIAssistantPage: React.FC = () => {
               ) : (
                 <div className="text-center py-8">
                   <Brain className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-                  <h3 className="text-lg font-medium text-foreground mb-2">ยังไม่มี AI Insights</h3>
+                  <h3 className="text-lg font-medium text-foreground mb-2">��ังไม่มี AI Insights</h3>
                   <p className="text-muted-foreground mb-4">
                     เริ่มใช้ AI Assistant เพื่อวิเคราะห์ข้อมูลลูกค้า
                   </p>
