@@ -1,6 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen, fireEvent, waitFor } from '@/test/utils';
-import { BrowserRouter } from 'react-router-dom';
+import { renderWithoutRouter, screen, fireEvent, waitFor } from '@/test/utils';
 import App from '@/App';
 
 // Mock all external dependencies
