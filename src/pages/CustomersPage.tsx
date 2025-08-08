@@ -319,6 +319,12 @@ const CustomersPage: React.FC = () => {
         customer={selectedCustomer}
         title="แก้ไขข้อมูลลูกค้า"
       />
+
+      <CustomerImportDialog
+        open={isImportDialogOpen}
+        onOpenChange={setIsImportDialogOpen}
+        onImport={handleImportCustomers}
+      />
     </DashboardLayout>
   );
 };
