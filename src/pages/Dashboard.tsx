@@ -1,10 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo, memo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { DashboardLayout } from '@/components/layouts/DashboardLayout';
 import { AdvancedStatsCard } from '@/components/dashboard/AdvancedStatsCard';
 import { CustomerCard } from '@/components/dashboard/CustomerCard';
-import { RevenueChart } from '@/components/dashboard/RevenueChart';
-import { CustomerHealthChart } from '@/components/dashboard/CustomerHealthChart';
+import { LazyRevenueChart, LazyCustomerHealthChart } from '@/components/charts/LazyCharts';
 import { ActivityHeatmap } from '@/components/dashboard/ActivityHeatmap';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
