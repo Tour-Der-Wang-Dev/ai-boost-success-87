@@ -17,18 +17,14 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { 
-  MoreHorizontal, 
-  ArrowUpDown, 
-  ArrowUp, 
-  ArrowDown,
+// Import only essential icons to reduce bundle size
+import {
+  MoreHorizontal,
+  ArrowUpDown,
   Mail,
-  Phone,
   Edit,
   Trash2,
-  MessageSquare,
-  TrendingUp,
-  TrendingDown
+  MessageSquare
 } from 'lucide-react';
 import { Customer } from '@/hooks/useCustomers';
 
