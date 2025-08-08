@@ -65,7 +65,7 @@ const AIChatComponent: React.FC<AIChatProps> = ({ onInsightGenerated }) => {
     }
   }, [messages]);
 
-  const handleSendMessage = async (content: string) => {
+  const handleSendMessage = useCallback(async (content: string) => {
     if (!content.trim()) return;
 
     const userMessage: Message = {
@@ -95,7 +95,7 @@ const AIChatComponent: React.FC<AIChatProps> = ({ onInsightGenerated }) => {
         });
       }
     }, 1500 + Math.random() * 1000);
-  };
+  }, [onInsightGenerated]);
 
   const generateAIResponse = (userInput: string): Message => {
     const input = userInput.toLowerCase();
