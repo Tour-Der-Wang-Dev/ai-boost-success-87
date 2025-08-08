@@ -98,17 +98,24 @@ const AIAssistantPage: React.FC = () => {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold bg-gradient-primary bg-clip-text text-transparent">
-            AI Assistant
+          <h1 className="text-3xl font-bold bg-gradient-primary bg-clip-text text-transparent flex items-center space-x-2">
+            <Bot className="w-8 h-8" />
+            <span>AI Customer Success Assistant</span>
           </h1>
           <p className="text-muted-foreground mt-1">
-            ใช้ AI เพื่อวิเคราะห์และให้คำแนะนำสำหรับ Customer Success
+            AI-powered insights, automation, and intelligent customer success management
           </p>
         </div>
-        <Button onClick={() => setIsPromptDialogOpen(true)}>
-          <Plus className="w-4 h-4 mr-2" />
-          Generate Insight
-        </Button>
+        <div className="flex space-x-3">
+          <Button variant="outline" size="sm">
+            <Settings className="w-4 h-4 mr-2" />
+            AI Settings
+          </Button>
+          <Button onClick={() => setIsPromptDialogOpen(true)}>
+            <Wand2 className="w-4 h-4 mr-2" />
+            Generate Insight
+          </Button>
+        </div>
       </div>
 
       {/* Quick Prompts */}
@@ -163,7 +170,7 @@ const AIAssistantPage: React.FC = () => {
               {loading ? (
                 <div className="text-center py-8">
                   <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
-                  <p className="text-muted-foreground mt-2">กำลังสร้าง AI Insights...</p>
+                  <p className="text-muted-foreground mt-2">กำล��งสร้าง AI Insights...</p>
                 </div>
               ) : insights.length > 0 ? (
                 <div className="space-y-4">
