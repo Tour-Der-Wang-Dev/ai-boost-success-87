@@ -43,10 +43,35 @@ const ActivitiesPage: React.FC = () => {
   };
 
   const handleCreateActivity = async (activityData: any) => {
-    const result = await createActivity(activityData);
+    const result = await createActivity({
+      ...activityData,
+      status: defaultStatus
+    });
     if (!result.error) {
       setIsCreateDialogOpen(false);
     }
+  };
+
+  const handleCreateActivityWithStatus = (status: string) => {
+    setDefaultStatus(status);
+    setIsCreateDialogOpen(true);
+  };
+
+  const handleExportActivities = () => {
+    const csvContent = [
+      'title,description,type,status,customer,due_date,created_at',
+      ...filteredActivities.map(activity =>
+        `"${activity.title}","${activity.description || ''}","${activity.type}","${activity.status}","${activity.customer?.name || ''}","${activity.due_date || ''}","${activity.created_at}"`
+      )
+    ].join('\n');
+
+    const blob = new Blob([csvContent], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `activities-${new Date().toISOString().split('T')[0]}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
   };
 
   const handleEditActivity = async (activityData: any) => {
