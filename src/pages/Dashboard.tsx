@@ -93,39 +93,70 @@ const Dashboard: React.FC = () => {
         </div>
       </div>
 
-      {/* Stats Cards */}
+      {/* Enhanced Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <StatsCard
+        <AdvancedStatsCard
           title="Total Customers"
           value={stats.totalCustomers.toString()}
           description="Active customers"
           icon={Users}
           trend={{ value: 12, label: 'vs last month', positive: true }}
           variant="default"
+          progress={{
+            value: stats.activeCustomers,
+            max: stats.totalCustomers,
+            label: "Active customers"
+          }}
+          chart={{
+            data: [45, 52, 48, 61, 58, 65, 72, 69, 74, 81, 78, 86],
+            color: "bg-primary"
+          }}
         />
-        <StatsCard
+        <AdvancedStatsCard
           title="Health Score Avg"
           value={`${stats.avgHealthScore}%`}
           description="Overall customer health"
           icon={TrendingUp}
           trend={{ value: 5, label: 'vs last month', positive: true }}
           variant="success"
+          progress={{
+            value: stats.avgHealthScore,
+            max: 100,
+            label: "Health target"
+          }}
+          chart={{
+            data: [65, 68, 72, 70, 75, 78, 74, 79, 82, 85, 83, stats.avgHealthScore],
+            color: "bg-accent"
+          }}
         />
-        <StatsCard
+        <AdvancedStatsCard
           title="Monthly Revenue"
           value={`$${stats.totalRevenue.toLocaleString()}`}
           description="Recurring revenue"
           icon={DollarSign}
           trend={{ value: 8, label: 'vs last month', positive: true }}
           variant="default"
+          chart={{
+            data: [42, 45, 48, 51, 54, 58, 62, 65, 68, 72, 76, 80],
+            color: "bg-primary"
+          }}
         />
-        <StatsCard
+        <AdvancedStatsCard
           title="At-Risk Customers"
           value={stats.atRiskCustomers.toString()}
           description="Need immediate attention"
           icon={AlertTriangle}
-          trend={{ value: 3, label: 'vs last month', positive: false }}
+          trend={{ value: -15, label: 'vs last month', positive: true }}
           variant="warning"
+          progress={{
+            value: stats.atRiskCustomers,
+            max: Math.max(stats.atRiskCustomers + 10, 20),
+            label: "Risk threshold"
+          }}
+          chart={{
+            data: [12, 10, 8, 11, 9, 7, 6, 8, 5, 7, 4, stats.atRiskCustomers],
+            color: "bg-orange-500"
+          }}
         />
       </div>
 
