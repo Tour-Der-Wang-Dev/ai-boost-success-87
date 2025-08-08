@@ -11,20 +11,15 @@ import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useCustomers } from '@/hooks/useCustomers';
 import { useActivities } from '@/hooks/useActivities';
-import { 
-  Users, 
-  TrendingUp, 
-  DollarSign, 
+// Import only necessary icons to reduce bundle size
+import {
+  Users,
+  TrendingUp,
+  DollarSign,
   Activity,
   Plus,
-  Filter,
-  Download,
   AlertTriangle,
   CheckCircle,
-  Target,
-  Calendar,
-  BarChart3,
-  PieChart,
   RefreshCw
 } from 'lucide-react';
 
