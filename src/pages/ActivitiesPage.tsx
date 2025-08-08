@@ -217,7 +217,7 @@ const ActivitiesPage: React.FC = () => {
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">ทุกประเภท</SelectItem>
-            <SelectItem value="call">โทรศัพท์</SelectItem>
+            <SelectItem value="call">โทรศัพ���์</SelectItem>
             <SelectItem value="email">อีเมล</SelectItem>
             <SelectItem value="meeting">ประชุม</SelectItem>
             <SelectItem value="note">บันทึก</SelectItem>
@@ -254,17 +254,34 @@ const ActivitiesPage: React.FC = () => {
 
       {/* Activities Tabs */}
       <Tabs defaultValue="list" className="w-full">
-        <TabsList className="grid w-full grid-cols-2">
-          <TabsTrigger value="list">รายการ</TabsTrigger>
-          <TabsTrigger value="calendar">ปฏิทิน</TabsTrigger>
+        <TabsList className="grid w-full grid-cols-4">
+          <TabsTrigger value="list" className="flex items-center space-x-2">
+            <List className="w-4 h-4" />
+            <span>รายการ</span>
+          </TabsTrigger>
+          <TabsTrigger value="kanban" className="flex items-center space-x-2">
+            <Target className="w-4 h-4" />
+            <span>Kanban</span>
+          </TabsTrigger>
+          <TabsTrigger value="timeline" className="flex items-center space-x-2">
+            <Calendar className="w-4 h-4" />
+            <span>Timeline</span>
+          </TabsTrigger>
+          <TabsTrigger value="analytics" className="flex items-center space-x-2">
+            <BarChart3 className="w-4 h-4" />
+            <span>Analytics</span>
+          </TabsTrigger>
         </TabsList>
-        
+
         <TabsContent value="list" className="space-y-4">
           <Card className="bg-gradient-card shadow-card border-0">
             <CardHeader>
-              <CardTitle className="flex items-center space-x-2">
-                <Activity className="w-5 h-5 text-primary" />
-                <span>กิจกรรมทั้งหมด ({filteredActivities.length})</span>
+              <CardTitle className="flex items-center justify-between">
+                <div className="flex items-center space-x-2">
+                  <Activity className="w-5 h-5 text-primary" />
+                  <span>กิจกรรมทั้งหมด ({filteredActivities.length})</span>
+                </div>
+                <Badge variant="outline">List View</Badge>
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -301,19 +318,154 @@ const ActivitiesPage: React.FC = () => {
             </CardContent>
           </Card>
         </TabsContent>
-        
-        <TabsContent value="calendar">
-          <Card className="bg-gradient-card shadow-card border-0">
-            <CardContent className="p-8">
-              <div className="text-center">
-                <Calendar className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
-                <h3 className="text-lg font-medium text-foreground mb-2">Calendar View</h3>
-                <p className="text-muted-foreground">
-                  Calendar integration จะพัฒนาในเวอร์ชันต่อไป
-                </p>
-              </div>
-            </CardContent>
-          </Card>
+
+        <TabsContent value="kanban" className="space-y-4">
+          <ActivityKanban
+            activities={filteredActivities}
+            onEdit={openEditDialog}
+            onDelete={(id) => deleteActivity(id)}
+            onStatusUpdate={(id, status) => updateActivity(id, { status })}
+            onCreateActivity={handleCreateActivityWithStatus}
+          />
+        </TabsContent>
+
+        <TabsContent value="timeline" className="space-y-4">
+          <ActivityTimeline
+            activities={filteredActivities}
+            onEdit={openEditDialog}
+            onDelete={(id) => deleteActivity(id)}
+            onStatusUpdate={(id, status) => updateActivity(id, { status })}
+          />
+        </TabsContent>
+
+        <TabsContent value="analytics" className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <Card className="bg-gradient-card shadow-card border-0">
+              <CardContent className="p-4">
+                <div className="flex items-center space-x-3">
+                  <div className="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center">
+                    <Clock className="w-5 h-5 text-orange-600" />
+                  </div>
+                  <div>
+                    <div className="text-2xl font-bold text-foreground">{stats.pending}</div>
+                    <div className="text-sm text-muted-foreground">Pending</div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="bg-gradient-card shadow-card border-0">
+              <CardContent className="p-4">
+                <div className="flex items-center space-x-3">
+                  <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
+                    <Activity className="w-5 h-5 text-primary" />
+                  </div>
+                  <div>
+                    <div className="text-2xl font-bold text-foreground">{stats.inProgress}</div>
+                    <div className="text-sm text-muted-foreground">In Progress</div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="bg-gradient-card shadow-card border-0">
+              <CardContent className="p-4">
+                <div className="flex items-center space-x-3">
+                  <div className="w-10 h-10 bg-accent/10 rounded-lg flex items-center justify-center">
+                    <CheckCircle className="w-5 h-5 text-accent" />
+                  </div>
+                  <div>
+                    <div className="text-2xl font-bold text-foreground">{stats.completed}</div>
+                    <div className="text-sm text-muted-foreground">Completed</div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="bg-gradient-card shadow-card border-0">
+              <CardContent className="p-4">
+                <div className="flex items-center space-x-3">
+                  <div className="w-10 h-10 bg-destructive/10 rounded-lg flex items-center justify-center">
+                    <AlertTriangle className="w-5 h-5 text-destructive" />
+                  </div>
+                  <div>
+                    <div className="text-2xl font-bold text-foreground">{stats.cancelled}</div>
+                    <div className="text-sm text-muted-foreground">Cancelled</div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <Card className="bg-gradient-card shadow-card border-0">
+              <CardHeader>
+                <CardTitle>Activity Distribution</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  {[
+                    { type: 'call', count: activities.filter(a => a.type === 'call').length, color: 'bg-blue-500' },
+                    { type: 'email', count: activities.filter(a => a.type === 'email').length, color: 'bg-green-500' },
+                    { type: 'meeting', count: activities.filter(a => a.type === 'meeting').length, color: 'bg-purple-500' },
+                    { type: 'task', count: activities.filter(a => a.type === 'task').length, color: 'bg-orange-500' },
+                    { type: 'note', count: activities.filter(a => a.type === 'note').length, color: 'bg-yellow-500' }
+                  ].map(({ type, count, color }) => (
+                    <div key={type} className="flex items-center space-x-3">
+                      <div className={`w-4 h-4 rounded ${color}`} />
+                      <span className="capitalize text-sm font-medium w-20">{type}</span>
+                      <div className="flex-1 bg-muted rounded-full h-2">
+                        <div
+                          className={`h-2 rounded-full ${color}`}
+                          style={{ width: `${(count / activities.length) * 100}%` }}
+                        />
+                      </div>
+                      <span className="text-sm text-muted-foreground w-12">{count}</span>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="bg-gradient-card shadow-card border-0">
+              <CardHeader>
+                <CardTitle>Performance Metrics</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-muted-foreground">Completion Rate</span>
+                    <span className="font-medium">
+                      {activities.length > 0 ? Math.round((stats.completed / activities.length) * 100) : 0}%
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-muted-foreground">Overdue Tasks</span>
+                    <Badge variant="destructive">
+                      {activities.filter(a => a.due_date && new Date(a.due_date) < new Date() && a.status !== 'completed').length}
+                    </Badge>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-muted-foreground">This Week</span>
+                    <span className="font-medium">
+                      {activities.filter(a => {
+                        const activityDate = new Date(a.created_at);
+                        const weekAgo = new Date();
+                        weekAgo.setDate(weekAgo.getDate() - 7);
+                        return activityDate > weekAgo;
+                      }).length}
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-muted-foreground">Avg per Day</span>
+                    <span className="font-medium">
+                      {(activities.length / 30).toFixed(1)}
+                    </span>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
         </TabsContent>
       </Tabs>
 
