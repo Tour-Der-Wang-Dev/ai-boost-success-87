@@ -40,28 +40,24 @@ const AIChatComponent: React.FC<AIChatProps> = ({ onInsightGenerated }) => {
   const [isLoading, setIsLoading] = useState(false);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
 
-  const quickSuggestions = [
+  const quickSuggestions = useMemo(() => [
     {
       text: "Analyze customer health trends",
-      icon: TrendingUp,
       color: "text-accent"
     },
     {
       text: "Identify at-risk customers",
-      icon: AlertTriangle,
       color: "text-orange-600"
     },
     {
       text: "Find growth opportunities",
-      icon: Target,
       color: "text-primary"
     },
     {
       text: "Generate weekly report",
-      icon: Lightbulb,
       color: "text-secondary"
     }
-  ];
+  ], []);
 
   useEffect(() => {
     if (scrollAreaRef.current) {
