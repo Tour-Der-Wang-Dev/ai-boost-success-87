@@ -1,6 +1,6 @@
 import React, { ReactElement } from 'react';
 import { render, RenderOptions } from '@testing-library/react';
-import { BrowserRouter } from 'react-router-dom';
+import { MemoryRouter } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { AuthProvider } from '@/contexts/AuthContext';
@@ -18,11 +18,32 @@ const AllTheProviders = ({ children }: { children: React.ReactNode }) => {
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
-        <BrowserRouter>
+        <MemoryRouter>
           <TooltipProvider>
             {children}
           </TooltipProvider>
-        </BrowserRouter>
+        </MemoryRouter>
+      </AuthProvider>
+    </QueryClientProvider>
+  );
+};
+
+// For components that already have routing, provide a version without router
+const ProvidersWithoutRouter = ({ children }: { children: React.ReactNode }) => {
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        retry: false,
+      },
+    },
+  });
+
+  return (
+    <QueryClientProvider client={queryClient}>
+      <AuthProvider>
+        <TooltipProvider>
+          {children}
+        </TooltipProvider>
       </AuthProvider>
     </QueryClientProvider>
   );
