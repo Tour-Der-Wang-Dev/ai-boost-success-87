@@ -2,20 +2,29 @@ import React, { useState } from 'react';
 import { DashboardLayout } from '@/components/layouts/DashboardLayout';
 import { ActivityCard } from '@/components/activities/ActivityCard';
 import { ActivityDialog } from '@/components/activities/ActivityDialog';
+import { ActivityTimeline } from '@/components/activities/ActivityTimeline';
+import { ActivityKanban } from '@/components/activities/ActivityKanban';
 import { useActivities } from '@/hooks/useActivities';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { 
-  Plus, 
-  Search, 
+import { Badge } from '@/components/ui/badge';
+import {
+  Plus,
+  Search,
   Activity,
   Calendar,
   CheckCircle,
   Clock,
-  AlertTriangle
+  AlertTriangle,
+  List,
+  BarChart3,
+  Filter,
+  Download,
+  RefreshCw,
+  Target
 } from 'lucide-react';
 
 const ActivitiesPage: React.FC = () => {
