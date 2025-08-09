@@ -1,20 +1,16 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, memo, useMemo, useCallback } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { 
-  Bot, 
-  User, 
-  Send, 
-  Loader2, 
-  MessageSquare,
-  Lightbulb,
-  TrendingUp,
-  AlertTriangle,
-  Target,
+// Import only essential icons
+import {
+  Bot,
+  User,
+  Send,
+  Loader2,
   Sparkles
 } from 'lucide-react';
 
@@ -30,7 +26,7 @@ interface AIChatProps {
   onInsightGenerated?: (insight: any) => void;
 }
 
-export const AIChat: React.FC<AIChatProps> = ({ onInsightGenerated }) => {
+const AIChatComponent: React.FC<AIChatProps> = ({ onInsightGenerated }) => {
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',
@@ -44,28 +40,24 @@ export const AIChat: React.FC<AIChatProps> = ({ onInsightGenerated }) => {
   const [isLoading, setIsLoading] = useState(false);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
 
-  const quickSuggestions = [
+  const quickSuggestions = useMemo(() => [
     {
       text: "Analyze customer health trends",
-      icon: TrendingUp,
       color: "text-accent"
     },
     {
       text: "Identify at-risk customers",
-      icon: AlertTriangle,
       color: "text-orange-600"
     },
     {
       text: "Find growth opportunities",
-      icon: Target,
       color: "text-primary"
     },
     {
       text: "Generate weekly report",
-      icon: Lightbulb,
       color: "text-secondary"
     }
-  ];
+  ], []);
 
   useEffect(() => {
     if (scrollAreaRef.current) {
@@ -73,7 +65,7 @@ export const AIChat: React.FC<AIChatProps> = ({ onInsightGenerated }) => {
     }
   }, [messages]);
 
-  const handleSendMessage = async (content: string) => {
+  const handleSendMessage = useCallback(async (content: string) => {
     if (!content.trim()) return;
 
     const userMessage: Message = {
@@ -103,7 +95,7 @@ export const AIChat: React.FC<AIChatProps> = ({ onInsightGenerated }) => {
         });
       }
     }, 1500 + Math.random() * 1000);
-  };
+  }, [onInsightGenerated]);
 
   const generateAIResponse = (userInput: string): Message => {
     const input = userInput.toLowerCase();
@@ -385,3 +377,5 @@ Would you like me to dive deeper into any of these areas?`,
     </Card>
   );
 };
+
+export const AIChat = memo(AIChatComponent);

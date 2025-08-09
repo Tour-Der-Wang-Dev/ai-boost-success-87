@@ -1,10 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo, memo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { DashboardLayout } from '@/components/layouts/DashboardLayout';
 import { AdvancedStatsCard } from '@/components/dashboard/AdvancedStatsCard';
 import { CustomerCard } from '@/components/dashboard/CustomerCard';
-import { RevenueChart } from '@/components/dashboard/RevenueChart';
-import { CustomerHealthChart } from '@/components/dashboard/CustomerHealthChart';
+import { LazyRevenueChart, LazyCustomerHealthChart } from '@/components/charts/LazyCharts';
 import { ActivityHeatmap } from '@/components/dashboard/ActivityHeatmap';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -12,24 +11,23 @@ import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useCustomers } from '@/hooks/useCustomers';
 import { useActivities } from '@/hooks/useActivities';
-import { 
-  Users, 
-  TrendingUp, 
-  DollarSign, 
+// Import only necessary icons to reduce bundle size
+import {
+  Users,
+  TrendingUp,
+  DollarSign,
   Activity,
   Plus,
-  Filter,
   Download,
   AlertTriangle,
   CheckCircle,
-  Target,
-  Calendar,
+  RefreshCw,
   BarChart3,
-  PieChart,
-  RefreshCw
+  Target,
+  Calendar
 } from 'lucide-react';
 
-const Dashboard: React.FC = () => {
+const DashboardComponent: React.FC = () => {
   const [selectedCustomer, setSelectedCustomer] = useState(null);
   const navigate = useNavigate();
   const { customers, loading: customersLoading } = useCustomers();
@@ -44,25 +42,28 @@ const Dashboard: React.FC = () => {
     console.log('Selected customer:', customer);
   };
 
-  // Calculate real stats from database data
-  const stats = {
+  // Calculate real stats from database data with memoization
+  const stats = useMemo(() => ({
     totalCustomers: customers.length,
     activeCustomers: customers.filter(c => c.status === 'active').length,
     atRiskCustomers: customers.filter(c => c.status === 'at-risk').length,
-    avgHealthScore: customers.length > 0 
+    avgHealthScore: customers.length > 0
       ? Math.round(customers.reduce((sum, c) => sum + (c.health_score || 0), 0) / customers.length)
       : 0,
     totalRevenue: customers.reduce((sum, c) => sum + (c.monthly_revenue || 0), 0)
-  };
+  }), [customers]);
 
-  // Get recent activities (last 5)
-  const recentActivities = activities.slice(0, 5);
+  // Get recent activities (last 5) with memoization
+  const recentActivities = useMemo(() => activities.slice(0, 5), [activities]);
 
-  // Get top customers to display
-  const topCustomers = customers
-    .filter(c => c.status === 'active' || c.status === 'at-risk')
-    .sort((a, b) => (b.health_score || 0) - (a.health_score || 0))
-    .slice(0, 4);
+  // Get top customers to display with memoization
+  const topCustomers = useMemo(() =>
+    customers
+      .filter(c => c.status === 'active' || c.status === 'at-risk')
+      .sort((a, b) => (b.health_score || 0) - (a.health_score || 0))
+      .slice(0, 4),
+    [customers]
+  );
 
   return (
     <DashboardLayout>
@@ -182,8 +183,8 @@ const Dashboard: React.FC = () => {
 
         <TabsContent value="overview" className="space-y-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <RevenueChart className="lg:col-span-1" />
-            <CustomerHealthChart className="lg:col-span-1" />
+            <LazyRevenueChart className="lg:col-span-1" />
+            <LazyCustomerHealthChart className="lg:col-span-1" />
           </div>
           <ActivityHeatmap />
         </TabsContent>
@@ -317,7 +318,7 @@ const Dashboard: React.FC = () => {
 
         <TabsContent value="revenue" className="space-y-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <RevenueChart className="lg:col-span-2" />
+            <LazyRevenueChart className="lg:col-span-2" />
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <AdvancedStatsCard
@@ -408,4 +409,5 @@ const Dashboard: React.FC = () => {
   );
 };
 
+const Dashboard = memo(DashboardComponent);
 export default Dashboard;

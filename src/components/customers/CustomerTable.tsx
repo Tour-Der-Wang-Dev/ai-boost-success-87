@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, memo, useMemo } from 'react';
 import {
   Table,
   TableBody,
@@ -17,18 +17,14 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { 
-  MoreHorizontal, 
-  ArrowUpDown, 
-  ArrowUp, 
-  ArrowDown,
+// Import only essential icons to reduce bundle size
+import {
+  MoreHorizontal,
+  ArrowUpDown,
   Mail,
-  Phone,
   Edit,
   Trash2,
-  MessageSquare,
-  TrendingUp,
-  TrendingDown
+  MessageSquare
 } from 'lucide-react';
 import { Customer } from '@/hooks/useCustomers';
 
@@ -43,7 +39,7 @@ interface CustomerTableProps {
 type SortField = 'name' | 'company' | 'health_score' | 'monthly_revenue' | 'last_activity_date' | 'status';
 type SortDirection = 'asc' | 'desc';
 
-export const CustomerTable: React.FC<CustomerTableProps> = ({
+const CustomerTableComponent: React.FC<CustomerTableProps> = ({
   customers,
   onEdit,
   onDelete,
@@ -62,9 +58,9 @@ export const CustomerTable: React.FC<CustomerTableProps> = ({
     }
   };
 
-  const sortedCustomers = [...customers].sort((a, b) => {
+  const sortedCustomers = useMemo(() => [...customers].sort((a, b) => {
     let aValue, bValue;
-    
+
     switch (sortField) {
       case 'name':
         aValue = a.name?.toLowerCase() || '';
@@ -100,7 +96,7 @@ export const CustomerTable: React.FC<CustomerTableProps> = ({
     } else {
       return aValue > bValue ? -1 : aValue < bValue ? 1 : 0;
     }
-  });
+  }), [customers, sortField, sortDirection]);
 
   const getStatusBadge = (status: string) => {
     switch (status) {
@@ -346,3 +342,5 @@ export const CustomerTable: React.FC<CustomerTableProps> = ({
     </div>
   );
 };
+
+export const CustomerTable = memo(CustomerTableComponent);
